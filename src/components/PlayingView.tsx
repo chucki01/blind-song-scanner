@@ -1,15 +1,19 @@
 import React from "react";
-import { Equalizer } from "./Equalizer";
+import { PlayerControls } from "./PlayerControls";
 import spotifyLogo from "../assets/img/Spotify_Full_Logo_RGB_Green.png";
 
 interface PlayingViewProps {
   onReset: () => void;
   onScanAgain: () => void;
+  isPlaying: boolean;
+  onPlayPause: () => void;
 }
 
 export const PlayingView: React.FC<PlayingViewProps> = ({
   onReset,
   onScanAgain,
+  isPlaying,
+  onPlayPause,
 }) => (
   <div className="bg-black flex flex-col items-center justify-center p-4">
     <div className="flex flex-col items-center relative">
@@ -19,7 +23,7 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
         className="w-32 mb-4 cursor-pointer hover:scale-105 transition-transform"
         onClick={onReset}
       />
-      <Equalizer />
+      <PlayerControls isPlaying={isPlaying} onPlayPause={onPlayPause} />
       <div className="absolute inset-0 bg-gradient-radial-t from-transparent via-black/50 to-black pointer-events-none" />
     </div>
     <button

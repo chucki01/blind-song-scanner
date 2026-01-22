@@ -19,6 +19,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [spotifyPlayer, setSpotifyPlayer] = useState<Spotify.Player | null>(
     null,
   );
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     if (isScanning || isError || scannedUrl) {
@@ -67,6 +68,13 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       console.error("Playback error:", message);
     });
 
+    // Escuchar cambios en el estado de reproducción
+    spotifyPlayer.addListener("player_state_changed", (state) => {
+      if (state) {
+        setIsPlaying(!state.paused);
+      }
+    });
+
     spotifyPlayer.connect().then(() => {});
 
     setSpotifyPlayer(spotifyPlayer);
@@ -85,9 +93,25 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
+      }).then(() => {
+        setIsPlaying(true);
       });
     }
   }, [spotifyPlayer, scannedUrl]);
+
+  const handlePlayPause = () => {
+    if (!spotifyPlayer) return;
+
+    if (isPlaying) {
+      spotifyPlayer.pause().then(() => {
+        setIsPlaying(false);
+      });
+    } else {
+      spotifyPlayer.resume().then(() => {
+        setIsPlaying(true);
+      });
+    }
+  };
 
   const handleScan = (result: string) => {
     if (result?.startsWith("https://open.spotify.com/")) {
@@ -109,6 +133,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setScannedUrl(null);
     setIsError(false);
     setIsScanning(true);
+    setIsPlaying(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
@@ -118,6 +143,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setScannedUrl(null);
     setIsError(false);
     setIsScanning(false);
+    setIsPlaying(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
@@ -128,7 +154,14 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   }
 
   if (scannedUrl) {
-    return <PlayingView onReset={resetToStart} onScanAgain={resetScanner} />;
+    return (
+      <PlayingView
+        onReset={resetToStart}
+        onScanAgain={resetScanner}
+        isPlaying={isPlaying}
+        onPlayPause={handlePlayPause}
+      />
+    );
   }
 
   return isScanning ? (
