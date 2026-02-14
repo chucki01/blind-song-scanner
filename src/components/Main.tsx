@@ -3,8 +3,9 @@ import { ScanButton } from "./ScanButton.tsx";
 import { PlayingView } from "./PlayingView.tsx";
 import { ErrorView } from "./ErrorView.tsx";
 import { ActivatePlayerView } from "./ActivatePlayerView.tsx";
-import { CountdownView } from "./CountdownView.tsx";
-import { FreeAccountPlayedView } from "./FreeAccountPlayedView.tsx";
+import { ReadyToOpenSpotify } from "./ReadyToOpenSpotify.tsx";
+import { CountdownAfterOpen } from "./CountdownAfterOpen.tsx";
+import { FreeAccountDone } from "./FreeAccountDone.tsx";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { LoadingIcon } from "./icons/LoadingIcon.tsx";
 
@@ -31,17 +32,20 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerActivated, setPlayerActivated] = useState(!isAndroid());
   const [isInitializing, setIsInitializing] = useState(false);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [freeAccountPlayed, setFreeAccountPlayed] = useState(false);
   const [isFreeAccount, setIsFreeAccount] = useState(false);
+  
+  // Nuevos estados para el flujo Free
+  const [showReadyToOpen, setShowReadyToOpen] = useState(false);
+  const [showCountdownAfterOpen, setShowCountdownAfterOpen] = useState(false);
+  const [freeAccountDone, setFreeAccountDone] = useState(false);
 
   useEffect(() => {
-    if (isScanning || isError || scannedUrl || showCountdown || freeAccountPlayed) {
+    if (isScanning || isError || scannedUrl || showReadyToOpen || showCountdownAfterOpen || freeAccountDone) {
       isActive(true);
     } else {
       isActive(false);
     }
-  }, [isScanning, isError, scannedUrl, showCountdown, freeAccountPlayed]);
+  }, [isScanning, isError, scannedUrl, showReadyToOpen, showCountdownAfterOpen, freeAccountDone]);
 
   useEffect(() => {
     if (resetTrigger > 0) {
@@ -49,7 +53,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   }, [resetTrigger]);
 
-  // Inicializar el player (intentarlo, si falla es Free)
+  // Inicializar el player
   const initializePlayer = async () => {
     if (spotifyPlayer) return;
 
@@ -89,9 +93,8 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
 
       player.addListener("account_error", ({ message }) => {
         console.error("Error de cuenta (probablemente Free):", message);
-        // Cuenta Free detectada
         setIsFreeAccount(true);
-        setDeviceId("free-account"); // Valor dummy para mostrar botón
+        setDeviceId("free-account");
         setIsInitializing(false);
       });
 
@@ -117,21 +120,18 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       }
     } catch (error) {
       console.error("Error:", error);
-      // Asumir cuenta Free y continuar
       setIsFreeAccount(true);
       setDeviceId("free-account");
       setIsInitializing(false);
     }
   };
 
-  // En iOS/desktop inicializar automáticamente
   useEffect(() => {
     if (playerActivated && !isAndroid()) {
       initializePlayer();
     }
   }, [playerActivated]);
 
-  // Manejar activación manual (Android)
   const handleActivatePlayer = () => {
     console.log("Activación manual del reproductor");
     setPlayerActivated(true);
@@ -171,11 +171,6 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       
       // Abrir en la app de Spotify
       window.location.href = spotifyUri;
-      
-      // Backup
-      setTimeout(() => {
-        window.open(url, "_blank");
-      }, 1000);
     }
   };
 
@@ -199,10 +194,10 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       setScannedUrl(result);
       setIsScanning(false);
       
-      // Si es cuenta Free, mostrar countdown
+      // Si es cuenta Free, mostrar pantalla "¿Listo?"
       if (isFreeAccount) {
-        console.log("Cuenta Free - mostrando countdown");
-        setShowCountdown(true);
+        console.log("Cuenta Free - mostrando pantalla Ready");
+        setShowReadyToOpen(true);
       }
     } else {
       setIsError(true);
@@ -210,13 +205,25 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   };
 
-  const handleCountdownComplete = () => {
-    console.log("Countdown completado");
-    setShowCountdown(false);
+  // Usuario hace clic en "Abrir Spotify"
+  const handleOpenSpotifyClick = () => {
+    console.log("Usuario quiere abrir Spotify");
+    
+    // Abrir Spotify (aparecerá el popup de Android)
     if (scannedUrl) {
       openInSpotifyApp(scannedUrl);
-      setFreeAccountPlayed(true);
     }
+    
+    // Ocultar pantalla "¿Listo?" y mostrar countdown
+    setShowReadyToOpen(false);
+    setShowCountdownAfterOpen(true);
+  };
+
+  // Countdown termina
+  const handleCountdownComplete = () => {
+    console.log("Countdown completado - Spotify ya debería estar cargando");
+    setShowCountdownAfterOpen(false);
+    setFreeAccountDone(true);
   };
 
   const handleError = (error: Error) => {
@@ -230,8 +237,9 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(true);
     setIsPlaying(false);
-    setShowCountdown(false);
-    setFreeAccountPlayed(false);
+    setShowReadyToOpen(false);
+    setShowCountdownAfterOpen(false);
+    setFreeAccountDone(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
@@ -242,32 +250,43 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(false);
     setIsPlaying(false);
-    setShowCountdown(false);
-    setFreeAccountPlayed(false);
+    setShowReadyToOpen(false);
+    setShowCountdownAfterOpen(false);
+    setFreeAccountDone(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
   };
 
-  // Mostrar pantalla de activación si no está activado (solo Android)
+  // Pantalla de activación (solo Android)
   if (!playerActivated) {
     return <ActivatePlayerView onActivate={handleActivatePlayer} />;
   }
 
-  // Mostrar loading solo mientras inicializa
+  // Loading mientras inicializa
   if (isInitializing) {
     return <LoadingIcon />;
   }
 
-  // Mostrar countdown para cuentas Free
-  if (showCountdown) {
-    return <CountdownView onComplete={handleCountdownComplete} />;
+  // Pantalla "¿Listo para abrir Spotify?" (Free)
+  if (showReadyToOpen) {
+    return (
+      <ReadyToOpenSpotify
+        onOpenSpotify={handleOpenSpotifyClick}
+        onCancel={resetToStart}
+      />
+    );
   }
 
-  // Mostrar pantalla después de reproducir en cuenta Free
-  if (freeAccountPlayed) {
+  // Countdown DESPUÉS de abrir Spotify (Free)
+  if (showCountdownAfterOpen) {
+    return <CountdownAfterOpen onComplete={handleCountdownComplete} />;
+  }
+
+  // Pantalla final (Free)
+  if (freeAccountDone) {
     return (
-      <FreeAccountPlayedView
+      <FreeAccountDone
         onScanAgain={resetScanner}
         onReset={resetToStart}
       />
@@ -278,7 +297,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     return <ErrorView onRetry={resetScanner} />;
   }
 
-  // Mostrar controles de reproducción para cuentas Premium
+  // Controles de reproducción (Premium)
   if (scannedUrl && !isFreeAccount) {
     return (
       <PlayingView
