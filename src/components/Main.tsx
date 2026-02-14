@@ -207,21 +207,22 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
 
   // Usuario hace clic en "Abrir Spotify"
   const handleOpenSpotifyClick = () => {
-    console.log("Usuario quiere abrir Spotify");
+    console.log("Usuario hace clic - mostrando countdown");
     
-    // Abrir Spotify (aparecerá el popup de Android)
-    if (scannedUrl) {
-      openInSpotifyApp(scannedUrl);
-    }
-    
-    // Ocultar pantalla "¿Listo?" y mostrar countdown
+    // NO abrir Spotify todavía, solo mostrar countdown
     setShowReadyToOpen(false);
     setShowCountdownAfterOpen(true);
   };
 
-  // Countdown termina
+  // Countdown termina - AHORA SÍ abrir Spotify
   const handleCountdownComplete = () => {
-    console.log("Countdown completado - Spotify ya debería estar cargando");
+    console.log("Countdown completado - ABRIENDO Spotify AHORA");
+    
+    // Abrir Spotify cuando el countdown termina (móvil ya debería estar girado)
+    if (scannedUrl) {
+      openInSpotifyApp(scannedUrl);
+    }
+    
     setShowCountdownAfterOpen(false);
     setFreeAccountDone(true);
   };

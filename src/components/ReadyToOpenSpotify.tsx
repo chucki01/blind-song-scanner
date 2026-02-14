@@ -22,14 +22,14 @@ export const ReadyToOpenSpotify: React.FC<ReadyToOpenSpotifyProps> = ({
       
       <div className="bg-gray-900 border-2 border-[#1DB954] rounded-lg p-6 mb-8">
         <p className="text-yellow-400 text-sm font-bold text-center mb-3">
-          ⚡ IMPORTANTE:
+          📋 CÓMO FUNCIONA:
         </p>
         <ol className="text-gray-300 text-sm space-y-2 text-left">
-          <li>1. Toca "Abrir Spotify" abajo</li>
-          <li>2. Acepta el popup de Android</li>
-          <li>3. Verás un countdown: 3...2...1</li>
-          <li>4. <span className="text-[#1DB954] font-bold">¡GIRA EL MÓVIL INMEDIATAMENTE!</span></li>
-          <li>5. No verás el nombre de la canción</li>
+          <li>1. Toca el botón verde abajo</li>
+          <li>2. Verás countdown: 3...2...1</li>
+          <li>3. <span className="text-[#1DB954] font-bold">¡GIRA EL MÓVIL BOCA ABAJO!</span></li>
+          <li>4. Al llegar a 0, Spotify se abrirá</li>
+          <li>5. Como el móvil está girado, no verás nada</li>
         </ol>
       </div>
 
@@ -38,7 +38,7 @@ export const ReadyToOpenSpotify: React.FC<ReadyToOpenSpotifyProps> = ({
         className="bg-[#1DB954] text-black font-bold py-4 px-10 rounded-full hover:bg-[#1ed760] transition-all flex items-center gap-3 text-lg transform hover:scale-105 active:scale-95 shadow-lg mb-4 w-full max-w-xs"
       >
         <span className="text-2xl">▶️</span>
-        Abrir Spotify
+        ¡Empezar!
       </button>
 
       <button
