@@ -3,9 +3,10 @@ import { ScanButton } from "./ScanButton.tsx";
 import { PlayingView } from "./PlayingView.tsx";
 import { ErrorView } from "./ErrorView.tsx";
 import { ActivatePlayerView } from "./ActivatePlayerView.tsx";
-import { ReadyToOpenSpotify } from "./ReadyToOpenSpotify.tsx";
-import { CountdownAfterOpen } from "./CountdownAfterOpen.tsx";
-import { FreeAccountDone } from "./FreeAccountDone.tsx";
+import { ReadyToFlip } from "./ReadyToFlip.tsx";
+import { WaitingForFlip } from "./WaitingForFlip.tsx";
+import { AudioPreviewPlayer } from "./AudioPreviewPlayer.tsx";
+import { PreviewDone } from "./PreviewDone.tsx";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { LoadingIcon } from "./icons/LoadingIcon.tsx";
 
@@ -26,26 +27,24 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [scannedUrl, setScannedUrl] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  const [spotifyPlayer, setSpotifyPlayer] = useState<Spotify.Player | null>(
-    null,
-  );
+  const [spotifyPlayer, setSpotifyPlayer] = useState<Spotify.Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerActivated, setPlayerActivated] = useState(!isAndroid());
   const [isInitializing, setIsInitializing] = useState(false);
   const [isFreeAccount, setIsFreeAccount] = useState(false);
   
-  // Nuevos estados para el flujo Free
-  const [showReadyToOpen, setShowReadyToOpen] = useState(false);
-  const [showCountdownAfterOpen, setShowCountdownAfterOpen] = useState(false);
-  const [freeAccountDone, setFreeAccountDone] = useState(false);
+  // Estados para el sistema de previews
+  const [showReadyToFlip, setShowReadyToFlip] = useState(false);
+  const [showWaitingForFlip, setShowWaitingForFlip] = useState(false);
+  const [isPlayingPreview, setIsPlayingPreview] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewDone, setPreviewDone] = useState(false);
 
   useEffect(() => {
-    if (isScanning || isError || scannedUrl || showReadyToOpen || showCountdownAfterOpen || freeAccountDone) {
-      isActive(true);
-    } else {
-      isActive(false);
-    }
-  }, [isScanning, isError, scannedUrl, showReadyToOpen, showCountdownAfterOpen, freeAccountDone]);
+    const active = isScanning || isError || scannedUrl || showReadyToFlip || 
+                   showWaitingForFlip || isPlayingPreview || previewDone;
+    isActive(active);
+  }, [isScanning, isError, scannedUrl, showReadyToFlip, showWaitingForFlip, isPlayingPreview, previewDone]);
 
   useEffect(() => {
     if (resetTrigger > 0) {
@@ -53,7 +52,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   }, [resetTrigger]);
 
-  // Inicializar el player
+  // Inicializar el player (solo para Premium)
   const initializePlayer = async () => {
     if (spotifyPlayer) return;
 
@@ -76,30 +75,11 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         setIsInitializing(false);
       });
 
-      player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device offline", device_id);
-        setIsInitializing(false);
-      });
-
-      player.addListener("initialization_error", ({ message }) => {
-        console.error("Error de inicialización:", message);
-        setIsInitializing(false);
-      });
-
-      player.addListener("authentication_error", ({ message }) => {
-        console.error("Error de autenticación:", message);
-        setIsInitializing(false);
-      });
-
       player.addListener("account_error", ({ message }) => {
-        console.error("Error de cuenta (probablemente Free):", message);
+        console.error("Error de cuenta (Free):", message);
         setIsFreeAccount(true);
         setDeviceId("free-account");
         setIsInitializing(false);
-      });
-
-      player.addListener("playback_error", ({ message }) => {
-        console.error("Error de reproducción:", message);
       });
 
       player.addListener("player_state_changed", (state) => {
@@ -113,7 +93,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         console.log("Player conectado");
         setSpotifyPlayer(player);
       } else {
-        console.log("No se pudo conectar - probablemente cuenta Free");
+        console.log("No se pudo conectar - cuenta Free");
         setIsFreeAccount(true);
         setDeviceId("free-account");
         setIsInitializing(false);
@@ -138,7 +118,27 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     initializePlayer();
   };
 
-  // Reproducir en cuentas Premium
+  // Obtener preview URL de Spotify
+  const getPreviewUrl = async (trackUrl: string): Promise<string | null> => {
+    try {
+      const trackId = trackUrl.split("/track/")[1]?.split("?")[0];
+      if (!trackId) return null;
+
+      const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await response.json();
+      return data.preview_url || null;
+    } catch (error) {
+      console.error("Error obteniendo preview:", error);
+      return null;
+    }
+  };
+
+  // Reproducir en Premium
   useEffect(() => {
     if (spotifyPlayer && scannedUrl && deviceId && !isFreeAccount && deviceId !== "free-account") {
       const spotifyUri = scannedUrl
@@ -162,18 +162,6 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   }, [spotifyPlayer, scannedUrl]);
 
-  // Abrir en Spotify app para cuentas Free
-  const openInSpotifyApp = (url: string) => {
-    const trackId = url.split("/track/")[1]?.split("?")[0];
-    if (trackId) {
-      const spotifyUri = `spotify:track:${trackId}`;
-      console.log("Abriendo en Spotify:", spotifyUri);
-      
-      // Abrir en la app de Spotify
-      window.location.href = spotifyUri;
-    }
-  };
-
   const handlePlayPause = () => {
     if (!spotifyPlayer) return;
 
@@ -188,16 +176,25 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   };
 
-  const handleScan = (result: string) => {
+  const handleScan = async (result: string) => {
     if (result?.startsWith("https://open.spotify.com/")) {
       console.log("QR escaneado:", result);
       setScannedUrl(result);
       setIsScanning(false);
       
-      // Si es cuenta Free, mostrar pantalla "¿Listo?"
+      // Si es cuenta Free, obtener preview y preparar giroscopio
       if (isFreeAccount) {
-        console.log("Cuenta Free - mostrando pantalla Ready");
-        setShowReadyToOpen(true);
+        console.log("Cuenta Free - obteniendo preview...");
+        const preview = await getPreviewUrl(result);
+        
+        if (preview) {
+          setPreviewUrl(preview);
+          setShowReadyToFlip(true);
+        } else {
+          alert("Esta canción no tiene preview disponible. Prueba con otra.");
+          setScannedUrl(null);
+          setIsScanning(true);
+        }
       }
     } else {
       setIsError(true);
@@ -205,26 +202,29 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   };
 
-  // Usuario hace clic en "Abrir Spotify"
-  const handleOpenSpotifyClick = () => {
-    console.log("Usuario hace clic - mostrando countdown");
-    
-    // NO abrir Spotify todavía, solo mostrar countdown
-    setShowReadyToOpen(false);
-    setShowCountdownAfterOpen(true);
+  const handleReadyToFlip = () => {
+    console.log("Usuario listo - esperando que gire el móvil");
+    setShowReadyToFlip(false);
+    setShowWaitingForFlip(true);
   };
 
-  // Countdown termina - AHORA SÍ abrir Spotify
-  const handleCountdownComplete = () => {
-    console.log("Countdown completado - ABRIENDO Spotify AHORA");
-    
-    // Abrir Spotify cuando el countdown termina (móvil ya debería estar girado)
-    if (scannedUrl) {
-      openInSpotifyApp(scannedUrl);
-    }
-    
-    setShowCountdownAfterOpen(false);
-    setFreeAccountDone(true);
+  const handleFlipped = () => {
+    console.log("¡Móvil girado! Reproduciendo preview...");
+    setShowWaitingForFlip(false);
+    setIsPlayingPreview(true);
+  };
+
+  const handlePreviewEnded = () => {
+    console.log("Preview terminado");
+    setIsPlayingPreview(false);
+    setPreviewDone(true);
+  };
+
+  const handlePreviewError = () => {
+    console.error("Error reproduciendo preview");
+    setIsPlayingPreview(false);
+    alert("Error reproduciendo la canción. Intenta de nuevo.");
+    resetToStart();
   };
 
   const handleError = (error: Error) => {
@@ -238,9 +238,11 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(true);
     setIsPlaying(false);
-    setShowReadyToOpen(false);
-    setShowCountdownAfterOpen(false);
-    setFreeAccountDone(false);
+    setShowReadyToFlip(false);
+    setShowWaitingForFlip(false);
+    setIsPlayingPreview(false);
+    setPreviewUrl(null);
+    setPreviewDone(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
@@ -251,9 +253,11 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(false);
     setIsPlaying(false);
-    setShowReadyToOpen(false);
-    setShowCountdownAfterOpen(false);
-    setFreeAccountDone(false);
+    setShowReadyToFlip(false);
+    setShowWaitingForFlip(false);
+    setIsPlayingPreview(false);
+    setPreviewUrl(null);
+    setPreviewDone(false);
     if (spotifyPlayer) {
       spotifyPlayer.pause();
     }
@@ -269,25 +273,42 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     return <LoadingIcon />;
   }
 
-  // Pantalla "¿Listo para abrir Spotify?" (Free)
-  if (showReadyToOpen) {
+  // Pantalla "¿Listo para girar?" (Free)
+  if (showReadyToFlip) {
     return (
-      <ReadyToOpenSpotify
-        onOpenSpotify={handleOpenSpotifyClick}
+      <ReadyToFlip
+        onReady={handleReadyToFlip}
+        onCancel={resetToStart}
+        isFree={isFreeAccount}
+      />
+    );
+  }
+
+  // Esperando que gire el móvil (Free)
+  if (showWaitingForFlip) {
+    return (
+      <WaitingForFlip
+        onFlipped={handleFlipped}
         onCancel={resetToStart}
       />
     );
   }
 
-  // Countdown DESPUÉS de abrir Spotify (Free)
-  if (showCountdownAfterOpen) {
-    return <CountdownAfterOpen onComplete={handleCountdownComplete} />;
+  // Reproduciendo preview (Free)
+  if (isPlayingPreview && previewUrl) {
+    return (
+      <AudioPreviewPlayer
+        previewUrl={previewUrl}
+        onEnded={handlePreviewEnded}
+        onError={handlePreviewError}
+      />
+    );
   }
 
-  // Pantalla final (Free)
-  if (freeAccountDone) {
+  // Preview terminado (Free)
+  if (previewDone) {
     return (
-      <FreeAccountDone
+      <PreviewDone
         onScanAgain={resetScanner}
         onReset={resetToStart}
       />
@@ -328,7 +349,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       <ScanButton onClick={() => setIsScanning(true)} />
       {isFreeAccount && (
         <p className="text-gray-400 text-sm text-center mt-4 max-w-md px-4">
-          💡 Cuenta Free detectada - Las canciones se abrirán en Spotify
+          💡 Cuenta Free: Previews de 30 segundos
         </p>
       )}
       <a
