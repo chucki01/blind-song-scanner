@@ -122,7 +122,12 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const getPreviewUrl = async (trackUrl: string): Promise<string | null> => {
     try {
       const trackId = trackUrl.split("/track/")[1]?.split("?")[0];
-      if (!trackId) return null;
+      if (!trackId) {
+        console.error("No se pudo extraer trackId de:", trackUrl);
+        return null;
+      }
+
+      console.log("Obteniendo preview para track:", trackId);
 
       const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
         headers: {
@@ -130,8 +135,21 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         },
       });
 
+      if (!response.ok) {
+        console.error("Error en API de Spotify:", response.status, response.statusText);
+        return null;
+      }
+
       const data = await response.json();
-      return data.preview_url || null;
+      console.log("Respuesta de Spotify:", data);
+      console.log("Preview URL:", data.preview_url);
+
+      if (data.preview_url && typeof data.preview_url === 'string' && data.preview_url.trim() !== '') {
+        return data.preview_url;
+      } else {
+        console.log("Esta canción no tiene preview_url disponible");
+        return null;
+      }
     } catch (error) {
       console.error("Error obteniendo preview:", error);
       return null;
@@ -182,16 +200,19 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       setScannedUrl(result);
       setIsScanning(false);
       
-      // Si es cuenta Free, obtener preview y preparar giroscopio
+      // Si es cuenta Free, obtener preview
       if (isFreeAccount) {
-        console.log("Cuenta Free - obteniendo preview...");
+        console.log("Cuenta Free detectada - intentando obtener preview...");
         const preview = await getPreviewUrl(result);
         
         if (preview) {
+          console.log("✅ Preview encontrado:", preview);
           setPreviewUrl(preview);
           setShowReadyToFlip(true);
         } else {
-          alert("Esta canción no tiene preview disponible. Prueba con otra.");
+          console.log("❌ No hay preview - mostrando mensaje");
+          alert("Lo sentimos, esta canción no tiene preview de 30 segundos disponible en Spotify.\n\nPrueba con otra canción, preferiblemente de artistas populares o lanzamientos recientes.");
+          // Resetear para poder escanear otra
           setScannedUrl(null);
           setIsScanning(true);
         }
