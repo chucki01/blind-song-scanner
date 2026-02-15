@@ -3,10 +3,9 @@ import { ScanButton } from "./ScanButton.tsx";
 import { PlayingView } from "./PlayingView.tsx";
 import { ErrorView } from "./ErrorView.tsx";
 import { ActivatePlayerView } from "./ActivatePlayerView.tsx";
-import { ReadyToFlip } from "./ReadyToFlip.tsx";
-import { WaitingForFlip } from "./WaitingForFlip.tsx";
-import { AudioPreviewPlayer } from "./AudioPreviewPlayer.tsx";
-import { PreviewDone } from "./PreviewDone.tsx";
+import { ReadyToPlay } from "./ReadyToPlay.tsx";
+import { FlipAndPlay } from "./FlipAndPlay.tsx";
+import { SongDone } from "./SongDone.tsx";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { LoadingIcon } from "./icons/LoadingIcon.tsx";
 
@@ -16,11 +15,7 @@ interface MainProps {
   isActive: (active: boolean) => void;
 }
 
-// Detectar si estamos en Android
-const isAndroid = () => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  return /android/.test(userAgent);
-};
+const isAndroid = () => /android/.test(navigator.userAgent.toLowerCase());
 
 function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [isScanning, setIsScanning] = useState(false);
@@ -33,225 +28,157 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [isInitializing, setIsInitializing] = useState(false);
   const [isFreeAccount, setIsFreeAccount] = useState(false);
   
-  // Estados para el sistema de previews
-  const [showReadyToFlip, setShowReadyToFlip] = useState(false);
-  const [showWaitingForFlip, setShowWaitingForFlip] = useState(false);
-  const [isPlayingPreview, setIsPlayingPreview] = useState(false);
+  const [showReady, setShowReady] = useState(false);
+  const [showFlipAndPlay, setShowFlipAndPlay] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewDone, setPreviewDone] = useState(false);
+  const [showDone, setShowDone] = useState(false);
 
   useEffect(() => {
-    const active = isScanning || isError || scannedUrl || showReadyToFlip || 
-                   showWaitingForFlip || isPlayingPreview || previewDone;
+    const active = isScanning || isError || scannedUrl || showReady || showFlipAndPlay || showDone;
     isActive(active);
-  }, [isScanning, isError, scannedUrl, showReadyToFlip, showWaitingForFlip, isPlayingPreview, previewDone]);
+  }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone]);
 
   useEffect(() => {
-    if (resetTrigger > 0) {
-      resetToStart();
-    }
+    if (resetTrigger > 0) resetToStart();
   }, [resetTrigger]);
 
-  // Inicializar el player (solo para Premium)
   const initializePlayer = async () => {
     if (spotifyPlayer) return;
-
-    console.log("Intentando inicializar reproductor...");
+    
     setIsInitializing(true);
 
     try {
       const player = new window.Spotify.Player({
         name: "Blind Song Scanner",
-        getOAuthToken: async (callback: (token: string) => void) => {
-          callback(accessToken);
-        },
+        getOAuthToken: (cb: (token: string) => void) => cb(accessToken),
         volume: 0.5,
       });
 
       player.addListener("ready", ({ device_id }) => {
-        console.log("Reproductor listo (Premium):", device_id);
+        console.log("✅ Premium");
         setDeviceId(device_id);
         setIsFreeAccount(false);
         setIsInitializing(false);
       });
 
-      player.addListener("account_error", ({ message }) => {
-        console.error("Error de cuenta (Free):", message);
+      player.addListener("account_error", () => {
+        console.log("✅ Free");
         setIsFreeAccount(true);
-        setDeviceId("free-account");
+        setDeviceId("free");
         setIsInitializing(false);
       });
 
       player.addListener("player_state_changed", (state) => {
-        if (state) {
-          setIsPlaying(!state.paused);
-        }
+        if (state) setIsPlaying(!state.paused);
       });
 
       const success = await player.connect();
       if (success) {
-        console.log("Player conectado");
         setSpotifyPlayer(player);
       } else {
-        console.log("No se pudo conectar - cuenta Free");
         setIsFreeAccount(true);
-        setDeviceId("free-account");
+        setDeviceId("free");
         setIsInitializing(false);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
       setIsFreeAccount(true);
-      setDeviceId("free-account");
+      setDeviceId("free");
       setIsInitializing(false);
     }
   };
 
   useEffect(() => {
-    if (playerActivated && !isAndroid()) {
-      initializePlayer();
-    }
+    if (playerActivated && !isAndroid()) initializePlayer();
   }, [playerActivated]);
 
-  const handleActivatePlayer = () => {
-    console.log("Activación manual del reproductor");
-    setPlayerActivated(true);
-    initializePlayer();
-  };
-
-  // Obtener preview URL de Spotify
-  const getPreviewUrl = async (trackUrl: string): Promise<string | null> => {
-    try {
-      const trackId = trackUrl.split("/track/")[1]?.split("?")[0];
-      if (!trackId) {
-        console.error("No se pudo extraer trackId de:", trackUrl);
-        return null;
-      }
-
-      console.log("Obteniendo preview para track:", trackId);
-
-      const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        console.error("Error en API de Spotify:", response.status, response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
-      console.log("Respuesta de Spotify:", data);
-      console.log("Preview URL:", data.preview_url);
-
-      if (data.preview_url && typeof data.preview_url === 'string' && data.preview_url.trim() !== '') {
-        return data.preview_url;
-      } else {
-        console.log("Esta canción no tiene preview_url disponible");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error obteniendo preview:", error);
-      return null;
-    }
-  };
-
-  // Reproducir en Premium
   useEffect(() => {
-    if (spotifyPlayer && scannedUrl && deviceId && !isFreeAccount && deviceId !== "free-account") {
-      const spotifyUri = scannedUrl
-        .replace("https://open.spotify.com/track/", "spotify:track:")
-        .split("?")[0];
-
-      console.log("Reproduciendo (Premium):", spotifyUri);
-
+    if (spotifyPlayer && scannedUrl && deviceId && !isFreeAccount && deviceId !== "free") {
+      const uri = scannedUrl.replace("https://open.spotify.com/track/", "spotify:track:").split("?")[0];
+      
       fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: "PUT",
-        body: JSON.stringify({ uris: [spotifyUri] }),
+        body: JSON.stringify({ uris: [uri] }),
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-      }).then(() => {
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.error("Error al reproducir:", error);
-      });
+      }).then(() => setIsPlaying(true));
     }
   }, [spotifyPlayer, scannedUrl]);
 
-  const handlePlayPause = () => {
-    if (!spotifyPlayer) return;
+  const getPreviewUrl = async (trackUrl: string): Promise<string | null> => {
+    try {
+      const trackId = trackUrl.split("/track/")[1]?.split("?")[0];
+      if (!trackId) return null;
 
-    if (isPlaying) {
-      spotifyPlayer.pause().then(() => {
-        setIsPlaying(false);
+      const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
-    } else {
-      spotifyPlayer.resume().then(() => {
-        setIsPlaying(true);
-      });
+
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      return data.preview_url || null;
+    } catch {
+      return null;
     }
   };
 
   const handleScan = async (result: string) => {
-    if (result?.startsWith("https://open.spotify.com/")) {
-      console.log("QR escaneado:", result);
-      setScannedUrl(result);
-      setIsScanning(false);
-      
-      // Si es cuenta Free, obtener preview
-      if (isFreeAccount) {
-        console.log("Cuenta Free detectada - intentando obtener preview...");
-        const preview = await getPreviewUrl(result);
-        
-        if (preview) {
-          console.log("✅ Preview encontrado:", preview);
-          setPreviewUrl(preview);
-          setShowReadyToFlip(true);
-        } else {
-          console.log("❌ No hay preview - mostrando mensaje");
-          alert("Lo sentimos, esta canción no tiene preview de 30 segundos disponible en Spotify.\n\nPrueba con otra canción, preferiblemente de artistas populares o lanzamientos recientes.");
-          // Resetear para poder escanear otra
-          setScannedUrl(null);
-          setIsScanning(true);
-        }
-      }
-    } else {
+    if (!result?.startsWith("https://open.spotify.com/")) {
       setIsError(true);
       setIsScanning(false);
+      return;
+    }
+
+    setScannedUrl(result);
+    setIsScanning(false);
+    
+    if (isFreeAccount) {
+      const preview = await getPreviewUrl(result);
+      
+      if (preview) {
+        setPreviewUrl(preview);
+        setShowReady(true);
+      } else {
+        alert("Esta canción no tiene preview.\n\nPrueba con canciones populares.");
+        setScannedUrl(null);
+        setIsScanning(true);
+      }
     }
   };
 
-  const handleReadyToFlip = () => {
-    console.log("Usuario listo - esperando que gire el móvil");
-    setShowReadyToFlip(false);
-    setShowWaitingForFlip(true);
+  const handlePlayPause = () => {
+    if (!spotifyPlayer) return;
+    
+    if (isPlaying) {
+      spotifyPlayer.pause().then(() => setIsPlaying(false));
+    } else {
+      spotifyPlayer.resume().then(() => setIsPlaying(true));
+    }
   };
 
-  const handleFlipped = () => {
-    console.log("¡Móvil girado! Reproduciendo preview...");
-    setShowWaitingForFlip(false);
-    setIsPlayingPreview(true);
+  const handleStartPlay = async () => {
+    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      try {
+        const permission = await (DeviceOrientationEvent as any).requestPermission();
+        if (permission !== 'granted') {
+          alert('Necesitamos permiso del giroscopio');
+          return;
+        }
+      } catch (error) {
+        console.error('Error permiso:', error);
+        return;
+      }
+    }
+    
+    setShowReady(false);
+    setShowFlipAndPlay(true);
   };
 
-  const handlePreviewEnded = () => {
-    console.log("Preview terminado");
-    setIsPlayingPreview(false);
-    setPreviewDone(true);
-  };
-
-  const handlePreviewError = () => {
-    console.error("Error reproduciendo preview");
-    setIsPlayingPreview(false);
-    alert("Error reproduciendo la canción. Intenta de nuevo.");
-    resetToStart();
-  };
-
-  const handleError = (error: Error) => {
-    console.error("Error del escáner:", error);
-    setIsError(true);
-    setIsScanning(false);
+  const handleSongEnded = () => {
+    setShowFlipAndPlay(false);
+    setShowDone(true);
   };
 
   const resetScanner = () => {
@@ -259,14 +186,11 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(true);
     setIsPlaying(false);
-    setShowReadyToFlip(false);
-    setShowWaitingForFlip(false);
-    setIsPlayingPreview(false);
+    setShowReady(false);
+    setShowFlipAndPlay(false);
     setPreviewUrl(null);
-    setPreviewDone(false);
-    if (spotifyPlayer) {
-      spotifyPlayer.pause();
-    }
+    setShowDone(false);
+    if (spotifyPlayer) spotifyPlayer.pause();
   };
 
   const resetToStart = () => {
@@ -274,109 +198,50 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setIsError(false);
     setIsScanning(false);
     setIsPlaying(false);
-    setShowReadyToFlip(false);
-    setShowWaitingForFlip(false);
-    setIsPlayingPreview(false);
+    setShowReady(false);
+    setShowFlipAndPlay(false);
     setPreviewUrl(null);
-    setPreviewDone(false);
-    if (spotifyPlayer) {
-      spotifyPlayer.pause();
-    }
+    setShowDone(false);
+    if (spotifyPlayer) spotifyPlayer.pause();
   };
 
-  // Pantalla de activación (solo Android)
   if (!playerActivated) {
-    return <ActivatePlayerView onActivate={handleActivatePlayer} />;
+    return <ActivatePlayerView onActivate={() => {
+      setPlayerActivated(true);
+      initializePlayer();
+    }} />;
   }
 
-  // Loading mientras inicializa
-  if (isInitializing) {
-    return <LoadingIcon />;
-  }
-
-  // Pantalla "¿Listo para girar?" (Free)
-  if (showReadyToFlip) {
-    return (
-      <ReadyToFlip
-        onReady={handleReadyToFlip}
-        onCancel={resetToStart}
-        isFree={isFreeAccount}
-      />
-    );
-  }
-
-  // Esperando que gire el móvil (Free)
-  if (showWaitingForFlip) {
-    return (
-      <WaitingForFlip
-        onFlipped={handleFlipped}
-        onCancel={resetToStart}
-      />
-    );
-  }
-
-  // Reproduciendo preview (Free)
-  if (isPlayingPreview && previewUrl) {
-    return (
-      <AudioPreviewPlayer
-        previewUrl={previewUrl}
-        onEnded={handlePreviewEnded}
-        onError={handlePreviewError}
-      />
-    );
-  }
-
-  // Preview terminado (Free)
-  if (previewDone) {
-    return (
-      <PreviewDone
-        onScanAgain={resetScanner}
-        onReset={resetToStart}
-      />
-    );
-  }
-
-  if (isError) {
-    return <ErrorView onRetry={resetScanner} />;
-  }
-
-  // Controles de reproducción (Premium)
-  if (scannedUrl && !isFreeAccount) {
-    return (
-      <PlayingView
-        onReset={resetToStart}
-        onScanAgain={resetScanner}
-        isPlaying={isPlaying}
-        onPlayPause={handlePlayPause}
-      />
-    );
-  }
+  if (isInitializing) return <LoadingIcon />;
+  if (showReady) return <ReadyToPlay onStart={handleStartPlay} onCancel={resetToStart} />;
+  if (showFlipAndPlay && previewUrl) return <FlipAndPlay previewUrl={previewUrl} onEnded={handleSongEnded} onCancel={resetToStart} />;
+  if (showDone) return <SongDone onNext={resetScanner} onReset={resetToStart} />;
+  if (isError) return <ErrorView onRetry={resetScanner} />;
+  if (scannedUrl && !isFreeAccount) return <PlayingView onReset={resetToStart} onScanAgain={resetScanner} isPlaying={isPlaying} onPlayPause={handlePlayPause} />;
 
   return isScanning ? (
     <div className="w-full max-w-md rounded-lg overflow-hidden shadow-2xl shadow-[#1DB954]/20">
       <QrScanner
         onDecode={handleScan}
-        onError={handleError}
+        onError={() => {
+          setIsError(true);
+          setIsScanning(false);
+        }}
         scanDelay={500}
         hideCount
         audio={false}
-        constraints={{
-          facingMode: "environment",
-        }}
+        constraints={{ facingMode: "environment" }}
       />
     </div>
-  ) : deviceId !== null ? (
+  ) : deviceId ? (
     <>
       <ScanButton onClick={() => setIsScanning(true)} />
       {isFreeAccount && (
         <p className="text-gray-400 text-sm text-center mt-4 max-w-md px-4">
-          💡 Cuenta Free: Previews de 30 segundos
+          💡 Previews de 30 segundos
         </p>
       )}
-      <a
-        className="text-[#1DB954] font-bold hover:text-[#1ed760] text-center mt-16"
-        href="https://www.blindsongscanner.com"
-      >
+      <a className="text-[#1DB954] font-bold hover:text-[#1ed760] text-center mt-16" href="https://www.blindsongscanner.com">
         About
       </a>
     </>
