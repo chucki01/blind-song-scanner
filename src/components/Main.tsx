@@ -111,9 +111,8 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       const trackId = trackUrl.split("/track/")[1]?.split("?")[0];
       if (!trackId) return null;
 
-      const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      // Usar nuestro proxy en lugar de la API de Spotify
+      const response = await fetch(`/api/preview?trackId=${trackId}`);
 
       if (!response.ok) return null;
 
