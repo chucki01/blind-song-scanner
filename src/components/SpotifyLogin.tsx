@@ -24,7 +24,7 @@ export const SpotifyLogin: React.FC = () => {
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,
       scope:
-        "streaming user-read-private user-read-email user-modify-playback-state user-read-playback-state",
+        "streaming user-read-private user-read-email user-modify-playback-state user-read-playback-state playlist-read-private",
       redirect_uri: REDIRECT_URL,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
