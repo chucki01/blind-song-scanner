@@ -91,6 +91,16 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     if (playerActivated && !isAndroid()) initializePlayer();
   }, [playerActivated]);
 
+  // Mostrar selección de modo cuando el player está listo
+  useEffect(() => {
+    if (deviceId && !isInitializing && !showModeSelection && !selectedMode && 
+        !isScanning && !scannedUrl && !showReady && !showFlipAndPlay && !showDone && 
+        !showPlaylistScanner && !showBingoPlayer) {
+      setShowModeSelection(true);
+    }
+  }, [deviceId, isInitializing, showModeSelection, selectedMode, isScanning, scannedUrl, 
+      showReady, showFlipAndPlay, showDone, showPlaylistScanner, showBingoPlayer]);
+
   useEffect(() => {
     if (spotifyPlayer && scannedUrl && deviceId && !isFreeAccount && deviceId !== "free") {
       const uri = scannedUrl.replace("https://open.spotify.com/track/", "spotify:track:").split("?")[0];
