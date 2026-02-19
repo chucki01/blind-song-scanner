@@ -3,6 +3,7 @@ import { ScanButton } from "./ScanButton.tsx";
 import { PlayingView } from "./PlayingView.tsx";
 import { ErrorView } from "./ErrorView.tsx";
 import { ActivatePlayerView } from "./ActivatePlayerView.tsx";
+import { ModeSelection } from "./ModeSelection.tsx";
 import { ReadyToPlay } from "./ReadyToPlay.tsx";
 import { FlipAndPlay } from "./FlipAndPlay.tsx";
 import { SongDone } from "./SongDone.tsx";
@@ -32,11 +33,15 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [showFlipAndPlay, setShowFlipAndPlay] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [showDone, setShowDone] = useState(false);
+  
+  // Estados para selección de modo
+  const [showModeSelection, setShowModeSelection] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<'normal' | 'bingo' | null>(null);
 
   useEffect(() => {
-    const active = isScanning || isError || scannedUrl || showReady || showFlipAndPlay || showDone;
+    const active = isScanning || isError || scannedUrl || showReady || showFlipAndPlay || showDone || showModeSelection;
     isActive(active);
-  }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone]);
+  }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone, showModeSelection]);
 
   useEffect(() => {
     if (resetTrigger > 0) resetToStart();
@@ -90,6 +95,13 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   useEffect(() => {
     if (playerActivated && !isAndroid()) initializePlayer();
   }, [playerActivated]);
+
+  // Mostrar selección de modo cuando el player está listo
+  useEffect(() => {
+    if (deviceId && !showModeSelection && !selectedMode) {
+      setShowModeSelection(true);
+    }
+  }, [deviceId, showModeSelection, selectedMode]);
 
   useEffect(() => {
     if (spotifyPlayer && scannedUrl && deviceId && !isFreeAccount && deviceId !== "free") {
@@ -180,6 +192,25 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setShowDone(true);
   };
 
+  const handleModeNormal = () => {
+    setSelectedMode('normal');
+    setShowModeSelection(false);
+  };
+
+  const handleModeBingo = () => {
+    setSelectedMode('bingo');
+    setShowModeSelection(false);
+    // TODO: Implementar modo bingo
+    alert('Modo Bingo próximamente... Por ahora usa Modo Normal');
+    setShowModeSelection(true);
+  };
+
+  const handleBackToModes = () => {
+    setSelectedMode(null);
+    setShowModeSelection(true);
+    resetToStart();
+  };
+
   const resetScanner = () => {
     setScannedUrl(null);
     setIsError(false);
@@ -201,6 +232,8 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setShowFlipAndPlay(false);
     setPreviewUrl(null);
     setShowDone(false);
+    setShowModeSelection(false);
+    setSelectedMode(null);
     if (spotifyPlayer) spotifyPlayer.pause();
   };
 
@@ -212,11 +245,21 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   }
 
   if (isInitializing) return <LoadingIcon />;
-  if (showReady) return <ReadyToPlay onStart={handleStartPlay} onCancel={resetToStart} />;
-  if (showFlipAndPlay && previewUrl) return <FlipAndPlay previewUrl={previewUrl} onEnded={handleSongEnded} onCancel={resetToStart} />;
-  if (showDone) return <SongDone onNext={resetScanner} onReset={resetToStart} />;
+  
+  if (showModeSelection) {
+    return (
+      <ModeSelection
+        onSelectNormal={handleModeNormal}
+        onSelectBingo={handleModeBingo}
+      />
+    );
+  }
+  
+  if (showReady) return <ReadyToPlay onStart={handleStartPlay} onCancel={handleBackToModes} />;
+  if (showFlipAndPlay && previewUrl) return <FlipAndPlay previewUrl={previewUrl} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
+  if (showDone) return <SongDone onNext={resetScanner} onReset={handleBackToModes} />;
   if (isError) return <ErrorView onRetry={resetScanner} />;
-  if (scannedUrl && !isFreeAccount) return <PlayingView onReset={resetToStart} onScanAgain={resetScanner} isPlaying={isPlaying} onPlayPause={handlePlayPause} />;
+  if (scannedUrl && !isFreeAccount) return <PlayingView onReset={handleBackToModes} onScanAgain={resetScanner} isPlaying={isPlaying} onPlayPause={handlePlayPause} />;
 
   return isScanning ? (
     <div className="w-full max-w-md rounded-lg overflow-hidden shadow-2xl shadow-[#1DB954]/20">
@@ -232,7 +275,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         constraints={{ facingMode: "environment" }}
       />
     </div>
-  ) : deviceId ? (
+  ) : deviceId && selectedMode === 'normal' ? (
     <>
       <ScanButton onClick={() => setIsScanning(true)} />
       {isFreeAccount && (
@@ -240,7 +283,13 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
           💡 Previews de 30 segundos
         </p>
       )}
-      <a className="text-[#1DB954] font-bold hover:text-[#1ed760] text-center mt-16" href="https://www.blindsongscanner.com">
+      <button
+        onClick={handleBackToModes}
+        className="text-gray-500 hover:text-gray-300 transition-colors mt-8 text-sm"
+      >
+        ← Cambiar modo
+      </button>
+      <a className="text-[#1DB954] font-bold hover:text-[#1ed760] text-center mt-4" href="https://www.blindsongscanner.com">
         About
       </a>
     </>
