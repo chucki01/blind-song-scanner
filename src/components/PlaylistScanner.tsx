@@ -13,10 +13,14 @@ export const PlaylistScanner: React.FC<PlaylistScannerProps> = ({
   onCancel,
 }) => {
   const handleScan = (result: string) => {
+    console.log("QR escaneado en modo bingo:", result);
+    
     if (result?.includes("open.spotify.com/playlist/")) {
+      console.log("✅ Playlist detectada");
       onPlaylistScanned(result);
     } else {
-      alert("Escanea un código QR de una playlist de Spotify");
+      console.log("❌ No es playlist:", result);
+      alert("Escanea un código QR de una playlist de Spotify\n\nURL detectada: " + result);
     }
   };
 
