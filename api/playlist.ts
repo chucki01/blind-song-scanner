@@ -1,5 +1,3 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Headers CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,33 +23,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Primera petición: obtener info básica de la playlist
-    const playlistResponse = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}?fields=name,description,public,tracks.total`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    console.log('🎵 Cargando playlist:', playlistId);
 
-    if (!playlistResponse.ok) {
-      const errorText = await playlistResponse.text();
-      console.log('Playlist info error:', playlistResponse.status, errorText);
-      
-      // Si es 403, intentar método alternativo
-      if (playlistResponse.status === 403) {
-        return await tryAlternativeMethod(playlistId, accessToken, res);
-      }
-      
-      return res.status(playlistResponse.status).json({ 
-        error: 'Failed to fetch playlist info',
-        status: playlistResponse.status 
-      });
-    }
-
-    // Segunda petición: obtener las canciones
+    // Obtener las canciones de la playlist REAL
     const tracksResponse = await fetch(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(id,name,artists(name),duration_ms,preview_url))&limit=50`,
       {
@@ -62,104 +36,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     );
 
+    console.log('📡 Spotify response:', tracksResponse.status);
+
     if (!tracksResponse.ok) {
-      return await tryAlternativeMethod(playlistId, accessToken, res);
+      const errorText = await tracksResponse.text();
+      console.log('❌ Error details:', errorText);
+      
+      return res.status(tracksResponse.status).json({ 
+        error: 'No se pudo cargar tu playlist. Verifica que sea pública y que tengas permisos.',
+        status: tracksResponse.status,
+        details: 'Error de Spotify API'
+      });
     }
 
     const tracksData = await tracksResponse.json();
+    console.log('✅ Tracks recibidos:', tracksData.items?.length);
 
-    // Filtrar y procesar tracks
+    // Procesar tracks REALES de tu playlist
     const tracks = tracksData.items
-      .filter((item: any) => item.track && item.track.type === 'track' && item.track.id)
+      .filter((item: any) => item.track && item.track.id)
       .map((item: any) => ({
         id: item.track.id,
         name: item.track.name,
-        artists: item.track.artists || [{ name: 'Unknown Artist' }],
+        artists: item.track.artists || [{ name: 'Artista Desconocido' }],
         duration_ms: item.track.duration_ms || 180000,
         preview_url: item.track.preview_url
       }));
 
     if (tracks.length === 0) {
       return res.status(400).json({ 
-        error: 'No valid tracks found in playlist',
+        error: 'Tu playlist no tiene canciones válidas o está vacía.',
         total: 0 
       });
     }
+
+    console.log('✅ Playlist cargada correctamente:', tracks.map(t => t.name));
 
     return res.status(200).json({ 
       tracks,
       total: tracks.length,
       success: true,
-      method: 'standard'
+      playlistId: playlistId,
+      message: 'Playlist real cargada correctamente'
     });
     
   } catch (error) {
-    console.error('Unexpected error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-}
-
-// Método alternativo usando embed scraping
-async function tryAlternativeMethod(playlistId: string, accessToken: string, res: VercelResponse) {
-  try {
-    // Como backup, crear una lista de tracks populares basada en el ID
-    const mockTracks = generateMockPlaylist(playlistId);
-    
-    return res.status(200).json({ 
-      tracks: mockTracks,
-      total: mockTracks.length,
-      success: true,
-      method: 'fallback',
-      message: 'Using fallback method due to API restrictions'
+    console.error('💥 Error inesperado:', error);
+    return res.status(500).json({ 
+      error: 'Error interno del servidor al cargar tu playlist.',
+      details: 'Inténtalo de nuevo en unos minutos.'
     });
-  } catch (error) {
-    return res.status(500).json({ error: 'All methods failed' });
   }
-}
-
-// Generar playlist de ejemplo para testing
-function generateMockPlaylist(playlistId: string) {
-  const popularTracks = [
-    {
-      id: '4iV5W9uYEdYUVa79Axb7Rh',
-      name: 'Blinding Lights',
-      artists: [{ name: 'The Weeknd' }],
-      duration_ms: 200040,
-      preview_url: null
-    },
-    {
-      id: '1301WleyT98MSxVHPZCA6M',
-      name: 'Heat Waves',
-      artists: [{ name: 'Glass Animals' }],
-      duration_ms: 238805,
-      preview_url: null
-    },
-    {
-      id: '5ChkMS8OtdzJeqyko5FpXP',
-      name: 'As It Was',
-      artists: [{ name: 'Harry Styles' }],
-      duration_ms: 167303,
-      preview_url: null
-    },
-    {
-      id: '7qiZfU4dY1lWllzX7mPBI3',
-      name: 'Shape of You',
-      artists: [{ name: 'Ed Sheeran' }],
-      duration_ms: 233713,
-      preview_url: null
-    },
-    {
-      id: '6habFhsOp2NvshLv26DqMb',
-      name: 'Someone Like You',
-      artists: [{ name: 'Adele' }],
-      duration_ms: 285240,
-      preview_url: null
-    }
-  ];
-
-  // Usar hash del playlistId para determinar qué tracks devolver
-  const hash = playlistId.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-  const numTracks = 3 + (hash % 3); // 3-5 tracks
-  
-  return popularTracks.slice(0, numTracks);
 }
