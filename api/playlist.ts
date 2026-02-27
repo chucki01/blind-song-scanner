@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Obtener las canciones de la playlist REAL
     const tracksResponse = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(id,name,artists(name),duration_ms,preview_url))&limit=50`,
+      `https://api.spotify.com/v1/playlists/${playlistId}/items?fields=items(item(id,name,artists(name),duration_ms))&limit=50`,
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -54,13 +54,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Procesar tracks REALES de tu playlist
     const tracks = tracksData.items
-      .filter((item: any) => item.track && item.track.id)
+      .filter((item: any) => item.item && item.item.id)
       .map((item: any) => ({
-        id: item.track.id,
-        name: item.track.name,
-        artists: item.track.artists || [{ name: 'Artista Desconocido' }],
-        duration_ms: item.track.duration_ms || 180000,
-        preview_url: item.track.preview_url
+        id: item.item.id,
+        name: item.item.name,
+        artists: item.item.artists || [{ name: 'Artista Desconocido' }],
+        duration_ms: item.item.duration_ms || 180000,
       }));
 
     if (tracks.length === 0) {
