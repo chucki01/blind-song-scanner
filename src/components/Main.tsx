@@ -376,12 +376,6 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setCurrentPlaylist([]);
   };
 
-  const handleBackToModes = () => {
-    setSelectedMode(null);
-    setShowModeSelection(true);
-    resetToStart();
-  };
-
   const resetScanner = () => {
     setScannedUrl(null);
     setIsError(false);
