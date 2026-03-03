@@ -78,7 +78,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", fontWeight: "900", letterSpacing: "1px", color: "#000" }}>
+            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
               MODO NORMAL
             </div>
             <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
@@ -100,7 +100,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", fontWeight: "900", letterSpacing: "1px", color: "#CAFF00" }}>
+            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", fontWeight: "900", letterSpacing: "0px", color: "#CAFF00" }}>
               MODO BINGO
             </div>
             <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
