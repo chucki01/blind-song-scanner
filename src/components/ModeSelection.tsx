@@ -77,14 +77,14 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           fontFamily: "'Russo One', sans-serif",
         }}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-lg tracking-wide">MODO NORMAL</div>
-            <div className="text-xs font-bold opacity-60 mt-0.5 tracking-wider" style={{ fontFamily: "Raleway, sans-serif" }}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-lg tracking-wide whitespace-nowrap">MODO NORMAL</div>
+            <div className="text-xs font-bold opacity-60 mt-0.5 whitespace-nowrap" style={{ fontFamily: "Raleway, sans-serif" }}>
               Escanea un QR individual
             </div>
           </div>
-          <span className="text-3xl">📱</span>
+          <span className="text-2xl flex-shrink-0">📱</span>
         </div>
       </button>
 
@@ -99,17 +99,17 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           color: "#CAFF00",
         }}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-lg tracking-wide">MODO BINGO</div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-lg tracking-wide whitespace-nowrap">MODO BINGO</div>
             <div
-              className="text-xs font-bold opacity-60 mt-0.5 tracking-wider"
+              className="text-xs font-bold opacity-60 mt-0.5 whitespace-nowrap"
               style={{ fontFamily: "Raleway, sans-serif", color: "rgba(245,242,235,0.5)" }}
             >
               Playlist completa
             </div>
           </div>
-          <span className="text-3xl">🎯</span>
+          <span className="text-2xl flex-shrink-0">🎯</span>
         </div>
       </button>
     </div>
