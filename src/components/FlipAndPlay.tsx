@@ -6,11 +6,7 @@ interface FlipAndPlayProps {
   onCancel: () => void;
 }
 
-export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({
-  previewUrl,
-  onEnded,
-  onCancel,
-}) => {
+export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, onCancel }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -18,112 +14,120 @@ export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({
   useEffect(() => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const beta = event.beta || 0;
-      
-      // Detectar móvil boca abajo (beta ~180)
       if (Math.abs(beta) > 150 && !isFlipped) {
-        console.log("¡Móvil girado! Beta:", beta);
         setIsFlipped(true);
-        
-        // Reproducir audio
         if (audioRef.current && !isPlaying) {
           audioRef.current.play()
-            .then(() => {
-              console.log("Preview reproduciendo");
-              setIsPlaying(true);
-            })
-            .catch((error) => {
-              console.error("Error reproduciendo:", error);
-            });
+            .then(() => setIsPlaying(true))
+            .catch((e) => console.error("Error reproduciendo:", e));
         }
       }
     };
-
-    window.addEventListener('deviceorientation', handleOrientation);
-
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
-    };
+    window.addEventListener("deviceorientation", handleOrientation);
+    return () => window.removeEventListener("deviceorientation", handleOrientation);
   }, [isFlipped, isPlaying]);
 
   return (
-    <div className="bg-black flex flex-col items-center justify-center p-4 min-h-screen">
+    <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-8 min-h-[60vh]">
       <audio
         ref={audioRef}
         src={previewUrl}
         onEnded={onEnded}
-        onError={() => {
-          console.error("Error en audio");
-          alert("Error reproduciendo. Intenta otra canción.");
-          onCancel();
-        }}
+        onError={() => { alert("Error reproduciendo. Intenta otra canción."); onCancel(); }}
       />
-      
+
       {!isFlipped ? (
-        // Esperando que gire el móvil
-        <div className="flex flex-col items-center max-w-md">
-          <div className="text-9xl mb-8 animate-bounce">
+        /* Waiting to flip */
+        <>
+          <div
+            className="w-28 h-28 rounded-2xl flex items-center justify-center text-6xl"
+            style={{
+              background: "rgba(202,255,0,0.08)",
+              border: "1.5px solid rgba(202,255,0,0.25)",
+              animation: "acidPulse 1.5s ease-in-out infinite",
+            }}
+          >
             🔄
           </div>
-          
-          <h2 className="text-[#1DB954] text-5xl font-bold mb-8 text-center animate-pulse">
-            ¡GIRA!
-          </h2>
-          
-          <div className="text-white text-2xl text-center mb-6 font-bold">
-            📱 PON EL MÓVIL<br/>BOCA ABAJO
-          </div>
-          
-          <p className="text-yellow-400 text-lg text-center mb-8">
-            La canción empezará automáticamente
-          </p>
 
-          <div className="bg-gray-900 rounded-lg p-6 border-2 border-gray-700">
-            <p className="text-gray-400 text-sm text-center">
-              💡 Gira completamente hasta<br/>
-              que quede horizontal
+          <div className="text-center flex flex-col gap-2">
+            <h2
+              className="text-4xl tracking-wide"
+              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", textShadow: "0 0 30px rgba(202,255,0,0.4)" }}
+            >
+              ¡GIRA!
+            </h2>
+            <p className="text-lg font-bold" style={{ color: "rgba(245,242,235,0.7)", fontFamily: "Raleway, sans-serif" }}>
+              Pon el móvil boca abajo
+            </p>
+            <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}>
+              La música empieza automáticamente
             </p>
           </div>
 
-          <button
-            onClick={onCancel}
-            className="mt-8 text-gray-500 hover:text-gray-300 transition-colors text-sm"
+          <div
+            className="w-full rounded-2xl p-4 text-center"
+            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
           >
-            Cancelar
-          </button>
-        </div>
+            <p className="text-xs font-bold" style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}>
+              💡 Gira completamente hasta que quede horizontal
+            </p>
+          </div>
+        </>
       ) : (
-        // Reproduciendo
-        <div className="flex flex-col items-center max-w-md">
-          <div className="text-8xl mb-8 animate-pulse">
+        /* Playing */
+        <>
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
+            style={{
+              background: "rgba(202,255,0,0.08)",
+              border: "2px solid rgba(202,255,0,0.3)",
+              boxShadow: "0 0 40px rgba(202,255,0,0.15)",
+            }}
+          >
             🎵
           </div>
-          
-          <h2 className="text-[#1DB954] text-4xl font-bold mb-6 text-center">
-            ¡Escuchando!
-          </h2>
-          
-          {/* Visualizador de audio */}
-          <div className="relative w-72 h-40 mb-8">
-            <div className="absolute inset-0 flex items-end justify-center gap-2">
-              {[...Array(10)].map((_, i) => (
+
+          <div className="text-center">
+            <h2
+              className="text-2xl tracking-wide mb-1"
+              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}
+            >
+              ESCUCHANDO
+            </h2>
+            <p className="text-sm" style={{ color: "rgba(245,242,235,0.35)", fontFamily: "Raleway, sans-serif" }}>
+              Móvil boca abajo · No mires 😉
+            </p>
+          </div>
+
+          {/* Waveform */}
+          <div
+            className="w-full rounded-2xl p-5"
+            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <div className="flex items-center gap-1 h-12">
+              {Array.from({ length: 18 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-6 bg-gradient-to-t from-[#1DB954] to-[#1ed760] rounded-full"
+                  className="flex-1 rounded-sm wave-bar"
                   style={{
+                    background: "#CAFF00",
                     height: `${30 + Math.random() * 70}%`,
-                    animation: `pulse 0.${5 + i}s ease-in-out infinite alternate`,
                   }}
                 />
               ))}
             </div>
           </div>
-
-          <p className="text-gray-400 text-center text-lg">
-            Móvil boca abajo<br/>
-            <span className="text-yellow-400">No mires la pantalla 😉</span>
-          </p>
-        </div>
+        </>
       )}
+
+      <button
+        onClick={onCancel}
+        className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
+      >
+        Cancelar
+      </button>
     </div>
   );
 };

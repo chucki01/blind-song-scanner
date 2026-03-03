@@ -5,68 +5,79 @@ interface WaitingForFlipProps {
   onCancel: () => void;
 }
 
-export const WaitingForFlip: React.FC<WaitingForFlipProps> = ({
-  onFlipped,
-  onCancel,
-}) => {
+export const WaitingForFlip: React.FC<WaitingForFlipProps> = ({ onFlipped, onCancel }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      // Detectar si el móvil está boca abajo
-      // beta ~180 significa boca abajo
       const beta = event.beta || 0;
-      
-      if (Math.abs(beta) > 150) {
-        if (!isFlipped) {
-          console.log("¡Móvil girado! Reproduciendo...");
-          setIsFlipped(true);
-          onFlipped();
-        }
+      if (Math.abs(beta) > 150 && !isFlipped) {
+        setIsFlipped(true);
+        onFlipped();
       }
     };
-
-    window.addEventListener('deviceorientation', handleOrientation);
-
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
-    };
+    window.addEventListener("deviceorientation", handleOrientation);
+    return () => window.removeEventListener("deviceorientation", handleOrientation);
   }, [isFlipped, onFlipped]);
 
   return (
-    <div className="bg-black flex flex-col items-center justify-center p-4 min-h-screen">
-      <div className="flex flex-col items-center max-w-md">
-        <div className="text-8xl mb-8 animate-bounce">
-          🔄
-        </div>
-        
-        <h2 className="text-[#1DB954] text-4xl font-bold mb-6 text-center animate-pulse">
-          ¡GIRA EL MÓVIL!
-        </h2>
-        
-        <div className="my-8">
-          <p className="text-white text-2xl text-center mb-4 font-bold">
-            📱 Ponlo BOCA ABAJO
-          </p>
-          <p className="text-yellow-400 text-lg text-center">
-            La música empezará automáticamente
-          </p>
-        </div>
+    <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-8 min-h-[60vh]">
 
-        <div className="mt-8 bg-gray-900 rounded-lg p-6 border-2 border-gray-700">
-          <p className="text-gray-400 text-sm text-center">
-            💡 Tip: Gira completamente el móvil<br />
-            hasta que quede horizontal
-          </p>
-        </div>
-
-        <button
-          onClick={onCancel}
-          className="mt-8 text-gray-500 hover:text-gray-300 transition-colors text-sm"
-        >
-          Cancelar
-        </button>
+      {/* Animated flip icon */}
+      <div
+        className="w-28 h-28 rounded-2xl flex items-center justify-center text-6xl"
+        style={{
+          background: "rgba(202,255,0,0.08)",
+          border: "1.5px solid rgba(202,255,0,0.25)",
+          animation: "acidPulse 1.5s ease-in-out infinite",
+        }}
+      >
+        🔄
       </div>
+
+      <div className="text-center flex flex-col gap-2">
+        <h2
+          className="text-4xl tracking-wide"
+          style={{
+            fontFamily: "'Russo One', sans-serif",
+            color: "#CAFF00",
+            textShadow: "0 0 30px rgba(202,255,0,0.4)",
+            animation: "acidPulse 2s ease-in-out infinite",
+          }}
+        >
+          ¡GIRA!
+        </h2>
+        <p
+          className="text-lg font-bold"
+          style={{ color: "rgba(245,242,235,0.7)", fontFamily: "Raleway, sans-serif" }}
+        >
+          Pon el móvil boca abajo
+        </p>
+        <p
+          className="text-sm"
+          style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}
+        >
+          La música empieza automáticamente
+        </p>
+      </div>
+
+      {/* Tip */}
+      <div
+        className="w-full rounded-2xl p-4 text-center"
+        style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        <p className="text-xs font-bold" style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}>
+          💡 Gira completamente hasta que quede horizontal
+        </p>
+      </div>
+
+      <button
+        onClick={onCancel}
+        className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
+      >
+        Cancelar
+      </button>
     </div>
   );
 };
