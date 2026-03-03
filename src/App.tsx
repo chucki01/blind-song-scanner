@@ -57,23 +57,25 @@ function App() {
       </div>
 
       <div
-        className="min-h-screen flex flex-col items-center justify-start pt-12 p-4 relative"
+        className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative"
         style={{ background: "#080808", zIndex: 1 }}
       >
-        <Header
-          onLogoClick={() => setResetTrigger((prev) => prev + 1)}
-          small={showSmallHeader}
-        />
-
-        {!isLoading && !accessToken ? <SpotifyLogin /> : null}
-
-        {accessToken && isSpotifySDKReady ? (
-          <Main
-            accessToken={accessToken}
-            resetTrigger={resetTrigger}
-            isActive={(active) => setShowSmallHeader(active)}
+        <div className="w-full max-w-sm flex flex-col items-center">
+          <Header
+            onLogoClick={() => setResetTrigger((prev) => prev + 1)}
+            small={showSmallHeader}
           />
-        ) : null}
+
+          {!isLoading && !accessToken ? <SpotifyLogin /> : null}
+
+          {accessToken && isSpotifySDKReady ? (
+            <Main
+              accessToken={accessToken}
+              resetTrigger={resetTrigger}
+              isActive={(active) => setShowSmallHeader(active)}
+            />
+          ) : null}
+        </div>
       </div>
     </>
   );
