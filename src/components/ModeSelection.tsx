@@ -70,46 +70,44 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       {/* Normal Mode */}
       <button
         onClick={onSelectNormal}
-        className="w-full py-5 px-6 rounded-2xl font-bold text-black text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full py-5 px-5 rounded-2xl text-black text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{
           background: "#CAFF00",
           boxShadow: "0 8px 30px rgba(202,255,0,0.25)",
-          fontFamily: "'Russo One', sans-serif",
         }}
       >
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="text-lg tracking-wide whitespace-nowrap">MODO NORMAL</div>
-            <div className="text-xs font-bold opacity-60 mt-0.5 whitespace-nowrap" style={{ fontFamily: "Raleway, sans-serif" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", fontWeight: "900", letterSpacing: "1px", color: "#000" }}>
+              MODO NORMAL
+            </div>
+            <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
               Escanea un QR individual
             </div>
           </div>
-          <span className="text-2xl flex-shrink-0">📱</span>
+          <span style={{ fontSize: "24px", marginLeft: "8px" }}>📱</span>
         </div>
       </button>
 
       {/* Bingo Mode */}
       <button
         onClick={onSelectBingo}
-        className="w-full py-5 px-6 rounded-2xl font-bold text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full py-5 px-5 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{
           background: "rgba(202,255,0,0.07)",
           border: "1.5px solid rgba(202,255,0,0.2)",
-          fontFamily: "'Russo One', sans-serif",
-          color: "#CAFF00",
         }}
       >
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="text-lg tracking-wide whitespace-nowrap">MODO BINGO</div>
-            <div
-              className="text-xs font-bold opacity-60 mt-0.5 whitespace-nowrap"
-              style={{ fontFamily: "Raleway, sans-serif", color: "rgba(245,242,235,0.5)" }}
-            >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", fontWeight: "900", letterSpacing: "1px", color: "#CAFF00" }}>
+              MODO BINGO
+            </div>
+            <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
               Playlist completa
             </div>
           </div>
-          <span className="text-2xl flex-shrink-0">🎯</span>
+          <span style={{ fontSize: "24px", marginLeft: "8px" }}>🎯</span>
         </div>
       </button>
     </div>
