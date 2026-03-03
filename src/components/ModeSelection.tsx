@@ -103,7 +103,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
             <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", fontWeight: "900", letterSpacing: "0px", color: "#CAFF00" }}>
               MODO BINGO
             </div>
-            <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
+            <div style={{ fontFamily: "sans-serif", fontSize: "10px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
               Suenan canciones · Marca tu cartón
             </div>
           </div>
