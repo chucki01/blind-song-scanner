@@ -81,7 +81,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
             <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "14px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
               MODO NORMAL
             </div>
-            <div style={{ fontFamily: "sans-serif", fontSize: "11px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
+            <div style={{ fontFamily: "sans-serif", fontSize: "10px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
               Escanea · Escucha · Adivina
             </div>
           </div>
