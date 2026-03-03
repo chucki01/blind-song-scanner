@@ -31,8 +31,8 @@ export const Header: React.FC<HeaderProps> = ({ onLogoClick, small }) => (
     {/* Tagline — only when big */}
     {!small && (
       <p
-        className="text-xs tracking-widest uppercase mt-3 font-bold"
-        style={{ color: "rgba(245,242,235,0.3)", letterSpacing: "0.3em" }}
+        className="text-xs uppercase mt-3 font-bold whitespace-nowrap"
+        style={{ color: "rgba(245,242,235,0.3)", letterSpacing: "0.2em", fontFamily: "Raleway, sans-serif" }}
       >
         Escanea · Escucha · Adivina
       </p>
