@@ -70,7 +70,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       {/* Normal Mode */}
       <button
         onClick={onSelectNormal}
-        className="w-full py-5 px-5 rounded-2xl text-black text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full py-4 px-4 rounded-2xl text-black text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{
           background: "#CAFF00",
           boxShadow: "0 8px 30px rgba(202,255,0,0.25)",
@@ -78,14 +78,14 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
+            <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "14px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
               MODO NORMAL
             </div>
-            <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
+            <div style={{ fontFamily: "sans-serif", fontSize: "11px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
               Escanea · Escucha · Adivina
             </div>
           </div>
-          <span style={{ fontSize: "24px", marginLeft: "8px" }}>📱</span>
+          <span style={{ fontSize: "20px", marginLeft: "6px" }}>📱</span>
         </div>
       </button>
 
