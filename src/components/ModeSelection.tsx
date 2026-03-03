@@ -82,7 +82,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
               MODO NORMAL
             </div>
             <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
-              Escanea un QR individual
+              Escanea · Escucha · Adivina
             </div>
           </div>
           <span style={{ fontSize: "24px", marginLeft: "8px" }}>📱</span>
@@ -104,7 +104,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
               MODO BINGO
             </div>
             <div style={{ fontFamily: "sans-serif", fontSize: "12px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
-              Playlist completa
+              Suenan canciones · Marca tu cartón
             </div>
           </div>
           <span style={{ fontSize: "24px", marginLeft: "8px" }}>🎯</span>
@@ -118,9 +118,9 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
     >
       <p className="text-xs text-center leading-relaxed" style={{ color: "rgba(245,242,235,0.3)" }}>
-        <span style={{ color: "#CAFF00" }}>Normal:</span> escanea cartas una a una
+        <span style={{ color: "#CAFF00" }}>Normal:</span> escanea el QR, suena la canción, ¡adivínala!
         {"  ·  "}
-        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> reproduce toda una playlist
+        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> suenan canciones, márcalas en tu cartón
       </p>
     </div>
   </div>
