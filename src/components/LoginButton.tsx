@@ -54,7 +54,7 @@ export const LoginButton: React.FC<LoginButtonProps> = ({ href }) => (
       className="text-xs text-center leading-relaxed"
       style={{ color: "rgba(245,242,235,0.25)", fontFamily: "Raleway, sans-serif" }}
     >
-      Necesitas una cuenta de Spotify Premium
+      Funciona con cuenta Spotify Free y Premium
     </p>
   </div>
 );
