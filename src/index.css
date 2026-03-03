@@ -1,3 +1,82 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Raleway:wght@300;400;600;800;900&display=swap');
+
+:root {
+  --acid: #CAFF00;
+  --acid-dim: rgba(202, 255, 0, 0.10);
+  --acid-glow: rgba(202, 255, 0, 0.35);
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --border: rgba(255, 255, 255, 0.07);
+  --muted: rgba(245, 242, 235, 0.35);
+  --white: #f5f2eb;
+}
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background: #080808;
+  color: var(--white);
+}
+
+.font-russo {
+  font-family: 'Russo One', sans-serif;
+}
+
+/* Acid glow pulse animation */
+@keyframes acidPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(202,255,0,0.15), 0 0 30px rgba(202,255,0,0.08); }
+  50%       { box-shadow: 0 0 0 14px rgba(202,255,0,0), 0 0 50px rgba(202,255,0,0.2); }
+}
+
+/* Ring pulse */
+@keyframes ringPulse {
+  0%   { opacity: 0; transform: scale(0.85); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* Float */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Waveform bar */
+@keyframes waveBar {
+  0%, 100% { transform: scaleY(0.25); }
+  50%       { transform: scaleY(1); }
+}
+
+/* Scan line */
+@keyframes scanLine {
+  0%   { top: 0%; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.animate-acid-pulse  { animation: acidPulse 2.5s ease-in-out infinite; }
+.animate-float       { animation: floatY 3s ease-in-out infinite; }
+.animate-scan-line   { animation: scanLine 2s ease-in-out infinite; }
+
+.wave-bar { animation: waveBar 1.2s ease-in-out infinite; }
+.wave-bar:nth-child(1)  { animation-delay: 0.00s; }
+.wave-bar:nth-child(2)  { animation-delay: 0.10s; }
+.wave-bar:nth-child(3)  { animation-delay: 0.20s; }
+.wave-bar:nth-child(4)  { animation-delay: 0.30s; }
+.wave-bar:nth-child(5)  { animation-delay: 0.40s; }
+.wave-bar:nth-child(6)  { animation-delay: 0.50s; }
+.wave-bar:nth-child(7)  { animation-delay: 0.60s; }
+.wave-bar:nth-child(8)  { animation-delay: 0.70s; }
+.wave-bar:nth-child(9)  { animation-delay: 0.80s; }
+.wave-bar:nth-child(10) { animation-delay: 0.90s; }
+.wave-bar:nth-child(11) { animation-delay: 1.00s; }
+.wave-bar:nth-child(12) { animation-delay: 1.10s; }
+
+.ring-pulse { animation: ringPulse 4s ease-out infinite; }
+.ring-pulse:nth-child(2) { animation-delay: 0.8s; }
+.ring-pulse:nth-child(3) { animation-delay: 1.6s; }
+.ring-pulse:nth-child(4) { animation-delay: 2.4s; }

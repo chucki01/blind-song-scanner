@@ -9,59 +9,121 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
   onSelectNormal,
   onSelectBingo,
 }) => (
-  <div className="bg-black flex flex-col items-center justify-center p-6 min-h-[70vh]">
-    <div className="flex flex-col items-center max-w-md w-full">
-      <div className="text-8xl mb-8">🎵</div>
-      
-      <h2 className="text-[#1DB954] text-4xl font-bold mb-4 text-center">
-        Blind Song Scanner
-      </h2>
-      
-      <p className="text-gray-400 text-center mb-12 text-lg">
-        Elige cómo quieres jugar
+  <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
+
+    {/* Animated QR icon */}
+    <div className="relative flex items-center justify-center mb-10">
+      {/* Pulse rings */}
+      <div className="absolute w-40 h-40 rounded-full border border-[#CAFF00]/10 ring-pulse" />
+      <div className="absolute w-56 h-56 rounded-full border border-[#CAFF00]/07 ring-pulse" />
+      <div className="absolute w-72 h-72 rounded-full border border-[#CAFF00]/05 ring-pulse" />
+
+      {/* QR Box */}
+      <div
+        className="relative w-28 h-28 rounded-2xl flex items-center justify-center animate-float"
+        style={{
+          background: "rgba(202,255,0,0.08)",
+          border: "1.5px solid rgba(202,255,0,0.25)",
+          animation: "acidPulse 2.5s ease-in-out infinite, floatY 3s ease-in-out infinite",
+        }}
+      >
+        <svg viewBox="0 0 80 80" fill="none" className="w-16 h-16">
+          {/* Top-left corner */}
+          <rect x="6" y="6" width="22" height="22" rx="3" stroke="#CAFF00" strokeWidth="2.5" fill="none"/>
+          <rect x="11" y="11" width="12" height="12" rx="1.5" fill="#CAFF00"/>
+          {/* Top-right corner */}
+          <rect x="52" y="6" width="22" height="22" rx="3" stroke="#CAFF00" strokeWidth="2.5" fill="none"/>
+          <rect x="57" y="11" width="12" height="12" rx="1.5" fill="#CAFF00"/>
+          {/* Bottom-left corner */}
+          <rect x="6" y="52" width="22" height="22" rx="3" stroke="#CAFF00" strokeWidth="2.5" fill="none"/>
+          <rect x="11" y="57" width="12" height="12" rx="1.5" fill="#CAFF00"/>
+          {/* Center music note */}
+          <text x="40" y="46" textAnchor="middle" fontSize="18" fill="#CAFF00" opacity="0.9">♪</text>
+          {/* Data dots */}
+          <rect x="35" y="6" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.7"/>
+          <rect x="42" y="6" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.4"/>
+          <rect x="35" y="13" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.5"/>
+          <rect x="42" y="13" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.8"/>
+          <rect x="35" y="52" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.6"/>
+          <rect x="42" y="52" width="10" height="5" rx="1" fill="#CAFF00" opacity="0.5"/>
+          <rect x="35" y="59" width="10" height="5" rx="1" fill="#CAFF00" opacity="0.7"/>
+          <rect x="52" y="35" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.6"/>
+          <rect x="59" y="35" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.9"/>
+          <rect x="66" y="35" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.4"/>
+          <rect x="52" y="42" width="10" height="5" rx="1" fill="#CAFF00" opacity="0.7"/>
+          <rect x="66" y="42" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    {/* Subtitle */}
+    <p
+      className="text-sm font-bold tracking-widest uppercase mb-8 text-center"
+      style={{ color: "rgba(245,242,235,0.3)" }}
+    >
+      Elige modo de juego
+    </p>
+
+    {/* Mode buttons */}
+    <div className="flex flex-col gap-4 w-full">
+
+      {/* Normal Mode */}
+      <button
+        onClick={onSelectNormal}
+        className="w-full py-5 px-6 rounded-2xl font-bold text-black text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        style={{
+          background: "#CAFF00",
+          boxShadow: "0 8px 30px rgba(202,255,0,0.25)",
+          fontFamily: "'Russo One', sans-serif",
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-lg tracking-wide">MODO NORMAL</div>
+            <div className="text-xs font-bold opacity-60 mt-0.5 tracking-wider" style={{ fontFamily: "Raleway, sans-serif" }}>
+              Escanea un QR individual
+            </div>
+          </div>
+          <span className="text-3xl">📱</span>
+        </div>
+      </button>
+
+      {/* Bingo Mode */}
+      <button
+        onClick={onSelectBingo}
+        className="w-full py-5 px-6 rounded-2xl font-bold text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        style={{
+          background: "rgba(202,255,0,0.07)",
+          border: "1.5px solid rgba(202,255,0,0.2)",
+          fontFamily: "'Russo One', sans-serif",
+          color: "#CAFF00",
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-lg tracking-wide">MODO BINGO</div>
+            <div
+              className="text-xs font-bold opacity-60 mt-0.5 tracking-wider"
+              style={{ fontFamily: "Raleway, sans-serif", color: "rgba(245,242,235,0.5)" }}
+            >
+              Playlist completa
+            </div>
+          </div>
+          <span className="text-3xl">🎯</span>
+        </div>
+      </button>
+    </div>
+
+    {/* Info note */}
+    <div
+      className="mt-8 rounded-xl p-4 w-full"
+      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+    >
+      <p className="text-xs text-center leading-relaxed" style={{ color: "rgba(245,242,235,0.3)" }}>
+        <span style={{ color: "#CAFF00" }}>Normal:</span> escanea cartas una a una
+        {"  ·  "}
+        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> reproduce toda una playlist
       </p>
-
-      <div className="flex flex-col gap-6 w-full max-w-sm">
-        {/* Modo Normal */}
-        <div 
-          onClick={onSelectNormal}
-          className="bg-gradient-to-r from-[#1DB954] to-[#1ed760] text-black font-bold py-8 px-6 rounded-2xl hover:scale-105 transition-all cursor-pointer shadow-2xl shadow-[#1DB954]/30"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col text-left">
-              <span className="text-2xl font-black">Modo Normal</span>
-              <span className="text-sm opacity-80 mt-1">
-                Escanea un código QR
-              </span>
-            </div>
-            <div className="text-4xl">📱</div>
-          </div>
-        </div>
-
-        {/* Modo Bingo */}
-        <div 
-          onClick={onSelectBingo}
-          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold py-8 px-6 rounded-2xl hover:scale-105 transition-all cursor-pointer shadow-2xl shadow-purple-600/30"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col text-left">
-              <span className="text-2xl font-black">Modo Bingo</span>
-              <span className="text-sm opacity-80 mt-1">
-                Playlist completa
-              </span>
-            </div>
-            <div className="text-4xl">🎲</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-12 bg-gray-900 rounded-xl p-4 border-l-4 border-[#1DB954]">
-        <p className="text-gray-300 text-sm text-center">
-          <strong className="text-[#1DB954]">Modo Normal:</strong> Escanea códigos QR individuales
-          <br />
-          <strong className="text-purple-400">Modo Bingo:</strong> Juega con playlists completas
-        </p>
-      </div>
     </div>
   </div>
 );
