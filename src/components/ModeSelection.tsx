@@ -11,7 +11,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
 }) => (
   <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
 
-    {/* Animated QR icon */}
     <div className="relative flex items-center justify-center mb-10">
       <div className="absolute w-40 h-40 rounded-full border border-[#CAFF00]/10 ring-pulse" />
       <div className="absolute w-56 h-56 rounded-full border border-[#CAFF00]/07 ring-pulse" />
@@ -48,50 +47,45 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       </div>
     </div>
 
-    <p
-      className="text-sm font-bold tracking-widest uppercase mb-8 text-center"
-      style={{ color: "rgba(245,242,235,0.3)" }}
-    >
+    <p className="text-base font-bold tracking-widest uppercase mb-8 text-center"
+      style={{ color: "rgba(245,242,235,0.3)" }}>
       Elige modo de juego
     </p>
 
     <div className="flex flex-col gap-4 w-full">
-
       <button
         onClick={onSelectNormal}
-        className="w-full py-4 px-4 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full py-5 px-5 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{ background: "#CAFF00", boxShadow: "0 8px 30px rgba(202,255,0,0.25)" }}
       >
-        <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", color: "#000" }}>
+        <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "20px", color: "#000" }}>
           MODO NORMAL
         </div>
-        <div style={{ fontFamily: "sans-serif", fontSize: "11px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
+        <div style={{ fontFamily: "sans-serif", fontSize: "13px", color: "rgba(0,0,0,0.6)", marginTop: "4px" }}>
           Escanea &middot; Escucha &middot; Adivina
         </div>
       </button>
 
       <button
         onClick={onSelectBingo}
-        className="w-full py-4 px-4 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full py-5 px-5 rounded-2xl text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{ background: "rgba(202,255,0,0.07)", border: "1.5px solid rgba(202,255,0,0.2)" }}
       >
-        <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", color: "#CAFF00" }}>
+        <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "20px", color: "#CAFF00" }}>
           MODO BINGO
         </div>
-        <div style={{ fontFamily: "sans-serif", fontSize: "11px", color: "rgba(245,242,235,0.45)", marginTop: "2px" }}>
-          Canciones en tu cart&oacute;n de bingo
+        <div style={{ fontFamily: "sans-serif", fontSize: "13px", color: "rgba(245,242,235,0.45)", marginTop: "4px" }}>
+          Tu cart&oacute;n de bingo musical
         </div>
       </button>
     </div>
 
-    <div
-      className="mt-8 rounded-xl p-4 w-full"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <p className="text-xs text-center leading-relaxed" style={{ color: "rgba(245,242,235,0.3)" }}>
+    <div className="mt-8 rounded-xl p-4 w-full"
+      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+      <p className="text-sm text-center leading-relaxed" style={{ color: "rgba(245,242,235,0.3)" }}>
         <span style={{ color: "#CAFF00" }}>Normal:</span> escanea el QR, suena la canci&oacute;n, &iexcl;adiv&iacute;nala!
         &nbsp;&middot;&nbsp;
-        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> canciones en tu cart&oacute;n de bingo
+        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> canciones en tu cart&oacute;n
       </p>
     </div>
   </div>

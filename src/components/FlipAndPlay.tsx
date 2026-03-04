@@ -37,95 +37,60 @@ export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, o
       />
 
       {!isFlipped ? (
-        /* Waiting to flip */
         <>
-          <div
-            className="w-28 h-28 rounded-2xl flex items-center justify-center text-6xl"
-            style={{
-              background: "rgba(202,255,0,0.08)",
-              border: "1.5px solid rgba(202,255,0,0.25)",
-              animation: "acidPulse 1.5s ease-in-out infinite",
-            }}
-          >
+          <div className="w-32 h-32 rounded-2xl flex items-center justify-center text-7xl"
+            style={{ background: "rgba(202,255,0,0.08)", border: "1.5px solid rgba(202,255,0,0.25)", animation: "acidPulse 1.5s ease-in-out infinite" }}>
             🔄
           </div>
-
-          <div className="text-center flex flex-col gap-2">
-            <h2
-              className="text-4xl tracking-wide"
-              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", textShadow: "0 0 30px rgba(202,255,0,0.4)" }}
-            >
+          <div className="text-center flex flex-col gap-3">
+            <h2 className="text-5xl tracking-wide"
+              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", textShadow: "0 0 30px rgba(202,255,0,0.4)" }}>
               ¡GIRA!
             </h2>
-            <p className="text-lg font-bold" style={{ color: "rgba(245,242,235,0.7)", fontFamily: "Raleway, sans-serif" }}>
+            <p className="text-xl font-bold" style={{ color: "rgba(245,242,235,0.7)" }}>
               Pon el móvil boca abajo
             </p>
-            <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}>
+            <p className="text-base" style={{ color: "rgba(245,242,235,0.4)" }}>
               La música empieza automáticamente
             </p>
           </div>
-
-          <div
-            className="w-full rounded-2xl p-4 text-center"
-            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <p className="text-xs font-bold" style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}>
+          <div className="w-full rounded-2xl p-4 text-center"
+            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <p className="text-sm font-bold" style={{ color: "rgba(245,242,235,0.3)" }}>
               💡 Gira completamente hasta que quede horizontal
             </p>
           </div>
         </>
       ) : (
-        /* Playing */
         <>
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
-            style={{
-              background: "rgba(202,255,0,0.08)",
-              border: "2px solid rgba(202,255,0,0.3)",
-              boxShadow: "0 0 40px rgba(202,255,0,0.15)",
-            }}
-          >
+          <div className="w-24 h-24 rounded-full flex items-center justify-center text-5xl"
+            style={{ background: "rgba(202,255,0,0.08)", border: "2px solid rgba(202,255,0,0.3)", boxShadow: "0 0 40px rgba(202,255,0,0.15)" }}>
             🎵
           </div>
-
           <div className="text-center">
-            <h2
-              className="text-2xl tracking-wide mb-1"
-              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}
-            >
+            <h2 className="text-3xl tracking-wide mb-2"
+              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
               ESCUCHANDO
             </h2>
-            <p className="text-sm" style={{ color: "rgba(245,242,235,0.35)", fontFamily: "Raleway, sans-serif" }}>
+            <p className="text-base" style={{ color: "rgba(245,242,235,0.35)" }}>
               Móvil boca abajo · No mires 😉
             </p>
           </div>
-
-          {/* Waveform */}
-          <div
-            className="w-full rounded-2xl p-5"
-            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <div className="flex items-center gap-1 h-12">
+          <div className="w-full rounded-2xl p-5"
+            style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="flex items-center gap-1 h-14">
               {Array.from({ length: 18 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm wave-bar"
-                  style={{
-                    background: "#CAFF00",
-                    height: `${30 + Math.random() * 70}%`,
-                  }}
-                />
+                <div key={i} className="flex-1 rounded-sm wave-bar"
+                  style={{ background: "#CAFF00", height: `${30 + Math.random() * 70}%` }} />
               ))}
             </div>
           </div>
         </>
       )}
 
-      <button
-        onClick={onCancel}
-        className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
-      >
+      <button onClick={onCancel}
+        className="text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+        style={{ color: "rgba(245,242,235,0.25)" }}>
         Cancelar
       </button>
     </div>
