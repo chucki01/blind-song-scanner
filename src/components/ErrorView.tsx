@@ -1,34 +1,70 @@
 import React from "react";
-import { ErrorIcon } from "./icons/ErrorIcon";
 
 interface ErrorViewProps {
   onRetry: () => void;
 }
 
 export const ErrorView: React.FC<ErrorViewProps> = ({ onRetry }) => (
-  <div className="bg-black flex flex-col items-center justify-center p-4">
-    <div className="flex flex-col items-center">
-      <div className="w-20 h-20 mb-6 rounded-full bg-red-500 flex items-center justify-center">
-        <ErrorIcon className="w-12 h-12 text-white" />
-      </div>
-      <h2 className="text-white text-2xl font-bold mb-4 text-center">
-        Invalid QR Code
-      </h2>
-      <p className="text-gray-400 text-center mb-8 max-w-md">
-        The scanned QR code is not a valid Spotify track link. <br />
-        Please try scanning a Spotify song link code:
-      </p>
-      <div className="bg-gray-900 p-1 mb-8 rounded">
-        <p className="font-light text-gray-300 text-center max-w-md">
-          https://open.spotify.com/track/...
-        </p>
-      </div>
+  <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-6">
+
+    {/* Icon */}
+    <div
+      className="w-24 h-24 rounded-full flex items-center justify-center text-5xl"
+      style={{
+        background: "rgba(255,45,120,0.08)",
+        border: "2px solid rgba(255,45,120,0.25)",
+        boxShadow: "0 0 40px rgba(255,45,120,0.1)",
+      }}
+    >
+      ✕
     </div>
+
+    {/* Title */}
+    <div className="text-center flex flex-col gap-2">
+      <h2
+        className="text-3xl tracking-wide"
+        style={{ fontFamily: "'Russo One', sans-serif", color: "#FF2D78", textShadow: "0 0 20px rgba(255,45,120,0.4)" }}
+      >
+        QR INVÁLIDO
+      </h2>
+      <p className="text-base" style={{ color: "rgba(245,242,235,0.4)" }}>
+        Este QR no es una canción de Spotify
+      </p>
+    </div>
+
+    {/* Divider */}
+    <div
+      className="w-full h-px"
+      style={{ background: "linear-gradient(90deg, transparent, rgba(255,45,120,0.2), transparent)" }}
+    />
+
+    {/* Info card */}
+    <div
+      className="w-full rounded-2xl p-5"
+      style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
+    >
+      <p className="text-sm font-bold mb-3" style={{ color: "rgba(245,242,235,0.3)" }}>
+        El QR debe ser de una canción:
+      </p>
+      <p className="text-sm font-mono" style={{ color: "rgba(202,255,0,0.5)" }}>
+        open.spotify.com/track/...
+      </p>
+    </div>
+
+    {/* Button */}
     <button
       onClick={onRetry}
-      className="bg-[#1DB954] text-black font-bold py-3 px-8 rounded-full hover:bg-[#1ed760] transition-colors transform hover:scale-105 active:scale-95"
+      className="w-full py-5 rounded-2xl font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
+      style={{
+        background: "#CAFF00",
+        color: "#000",
+        fontFamily: "'Russo One', sans-serif",
+        fontSize: "16px",
+        letterSpacing: "0.1em",
+        boxShadow: "0 8px 30px rgba(202,255,0,0.2)",
+      }}
     >
-      Try Again
+      → INTENTAR DE NUEVO
     </button>
   </div>
 );
