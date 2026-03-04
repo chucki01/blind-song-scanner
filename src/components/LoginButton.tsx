@@ -3,9 +3,10 @@ import { BlackSpotifyIcon } from "./icons/BlackSpotifyIcon.tsx";
 
 interface LoginButtonProps {
   href: string;
+  onInstructions: () => void;
 }
 
-export const LoginButton: React.FC<LoginButtonProps> = ({ href }) => (
+export const LoginButton: React.FC<LoginButtonProps> = ({ href, onInstructions }) => (
   <div className="flex flex-col items-center gap-6 w-full">
 
     {/* QR decorative icon */}
@@ -56,5 +57,21 @@ export const LoginButton: React.FC<LoginButtonProps> = ({ href }) => (
     >
       Funciona con cuenta Spotify Free y Premium
     </p>
+
+    {/* Instructions button */}
+    <button
+      onClick={onInstructions}
+      className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        color: "rgba(245,242,235,0.4)",
+        fontFamily: "'Russo One', sans-serif",
+        fontSize: "14px",
+        letterSpacing: "0.1em",
+      }}
+    >
+      ? CÓMO SE JUEGA
+    </button>
   </div>
 );
