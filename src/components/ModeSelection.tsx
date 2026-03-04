@@ -76,7 +76,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           boxShadow: "0 8px 30px rgba(202,255,0,0.25)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
           <div>
             <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "14px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
               MODO NORMAL
