@@ -76,7 +76,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           boxShadow: "0 8px 30px rgba(202,255,0,0.25)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
           <div>
             <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "14px", fontWeight: "900", letterSpacing: "0px", color: "#000" }}>
               MODO NORMAL
@@ -84,8 +84,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
             <div style={{ fontFamily: "sans-serif", fontSize: "10px", color: "rgba(0,0,0,0.6)", marginTop: "2px" }}>
               Escanea · Escucha · Adivina
             </div>
-          </div>
-          <span style={{ fontSize: "20px", marginLeft: "6px" }}>📱</span>
+          </div> 
         </div>
       </button>
 
@@ -98,7 +97,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
           border: "1.5px solid rgba(202,255,0,0.2)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
           <div>
             <div style={{ fontFamily: "'Russo One', sans-serif", fontSize: "16px", fontWeight: "900", letterSpacing: "0px", color: "#CAFF00" }}>
               MODO BINGO
@@ -107,7 +106,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
               Suenan canciones · Marca tu cartón
             </div>
           </div>
-          <span style={{ fontSize: "24px", marginLeft: "8px" }}>🎯</span>
         </div>
       </button>
     </div>
