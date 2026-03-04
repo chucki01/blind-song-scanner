@@ -3,11 +3,13 @@ import React from "react";
 interface ModeSelectionProps {
   onSelectNormal: () => void;
   onSelectBingo: () => void;
+  onInstructions: () => void;
 }
 
 export const ModeSelection: React.FC<ModeSelectionProps> = ({
   onSelectNormal,
   onSelectBingo,
+  onInstructions,
 }) => (
   <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
 
@@ -79,6 +81,22 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
         </div>
       </button>
     </div>
+
+    {/* Instructions button */}
+    <button
+      onClick={onInstructions}
+      className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        color: "rgba(245,242,235,0.4)",
+        fontFamily: "'Russo One', sans-serif",
+        fontSize: "14px",
+        letterSpacing: "0.1em",
+      }}
+    >
+      ? CÓMO SE JUEGA
+    </button>
 
     <div className="mt-8 rounded-xl p-4 w-full"
       style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
