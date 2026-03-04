@@ -20,10 +20,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedUrl, setScannedUrl] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
-  const [spotifyPlayer, setSpotifyPlayer] = useState<Spotify.Player | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playerActivated, setPlayerActivated] = useState(true);
-  const [isInitializing, setIsInitializing] = useState(false);
   const [isFreeAccount, setIsFreeAccount] = useState(true);
 
   const [showReady, setShowReady] = useState(false);
@@ -37,13 +34,14 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [showPlaylistScanner, setShowPlaylistScanner] = useState(false);
   const [showBingoPlayer, setShowBingoPlayer] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<any[]>([]);
+  const [isLoadingPlaylist, setIsLoadingPlaylist] = useState(false);
 
   useEffect(() => {
-    const active = isScanning || isError || scannedUrl || showReady || showFlipAndPlay || showDone ||
+    const active = isScanning || isError || !!scannedUrl || showReady || showFlipAndPlay || showDone ||
       showModeSelection || showPlaylistScanner || showBingoPlayer;
     isActive(active);
-  }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone, showModeSelection,
-    showPlaylistScanner, showBingoPlayer]);
+  }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone,
+    showModeSelection, showPlaylistScanner, showBingoPlayer]);
 
   useEffect(() => {
     if (resetTrigger > 0) resetToStart();
@@ -66,8 +64,29 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       if (!response.ok) return null;
       const data = await response.json();
       return data.preview_url || null;
-    } catch {
-      return null;
+    } catch { return null; }
+  };
+
+  const fetchPlaylistTracks = async (playlistUrl: string): Promise<any[]> => {
+    try {
+      const playlistId = playlistUrl
+        .split("open.spotify.com/playlist/")[1]
+        ?.split("?")[0];
+      if (!playlistId) throw new Error("ID de playlist inválido");
+
+      // accessToken as query param (matches playlist.ts backend)
+      const response = await fetch(
+        `/api/playlist?playlistId=${playlistId}&accessToken=${encodeURIComponent(accessToken)}`
+      );
+      if (!response.ok) throw new Error("Error al cargar la playlist");
+      const data = await response.json();
+
+      // Backend returns { tracks: [...] }
+      const tracks = (data.tracks || []).filter((t: any) => t && t.id);
+      return tracks;
+    } catch (err) {
+      console.error("Error fetching playlist:", err);
+      throw err;
     }
   };
 
@@ -84,7 +103,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       setPreviewUrl(preview);
       setShowReady(true);
     } else {
-      alert("Esta canción no tiene preview de 30 segundos.\n\nPrueba con otra canción.");
+      alert("Esta canción no tiene preview.\n\nPrueba con otra canción.");
       setScannedUrl(null);
       setIsScanning(true);
     }
@@ -98,9 +117,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
           alert("Necesitamos permiso del giroscopio");
           return;
         }
-      } catch {
-        return;
-      }
+      } catch { return; }
     }
     setShowReady(false);
     setShowFlipAndPlay(true);
@@ -123,33 +140,21 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   };
 
   const handlePlaylistScanned = async (playlistUrl: string) => {
+    setIsLoadingPlaylist(true);
     try {
-      let playlist;
-      let gameVersion = "Unknown";
-
-      if (playlistUrl.includes("eurovision") || playlistUrl.includes("37i9dQZF1DX0XUsuxWHRQd")) {
-        gameVersion = "Eurovisión Edition";
-        playlist = [
-          { id: "4iEEgA4wPtzCp9jfZ8aHlh", name: "Waterloo", artists: [{ name: "ABBA" }], duration_ms: 164000 },
-          { id: "5HKnTk2iLXRfLSkjJE9ZxQ", name: "Euphoria", artists: [{ name: "Loreen" }], duration_ms: 180000 },
-        ];
-      } else if (playlistUrl.includes("popespanol") || playlistUrl.includes("37i9dQZF1DWXRqgorJj26U")) {
-        gameVersion = "Pop Español Edition";
-        playlist = [
-          { id: "5aB6Cd7EfG8hI9jK0lM1nO", name: "Macarena", artists: [{ name: "Los Del Rio" }], duration_ms: 231000 },
-        ];
-      } else {
-        gameVersion = "Electronic Hits Edition";
-        playlist = [
-          { id: "5uuJruktM9fMdN9Va0DUMp", name: "Sandstorm", artists: [{ name: "Darude" }], duration_ms: 231000 },
-        ];
+      const tracks = await fetchPlaylistTracks(playlistUrl);
+      if (tracks.length === 0) {
+        alert("La playlist está vacía o no se pudieron cargar las canciones.");
+        setIsLoadingPlaylist(false);
+        return;
       }
-
-      setCurrentPlaylist(playlist);
+      setCurrentPlaylist(tracks);
       setShowPlaylistScanner(false);
       setShowBingoPlayer(true);
     } catch {
-      alert("Error al cargar la playlist");
+      alert("Error al cargar la playlist. Comprueba tu conexión e inténtalo de nuevo.");
+    } finally {
+      setIsLoadingPlaylist(false);
     }
   };
 
@@ -192,7 +197,30 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setCurrentPlaylist([]);
   };
 
-  if (showModeSelection) return <ModeSelection onSelectNormal={handleModeNormal} onSelectBingo={handleModeBingo} />;
+  // Loading state while fetching playlist
+  if (isLoadingPlaylist) return (
+    <div className="flex flex-col items-center justify-center gap-4 p-6">
+      <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+        style={{ background: "rgba(202,255,0,0.08)", border: "1.5px solid rgba(202,255,0,0.2)", animation: "acidPulse 1.5s ease-in-out infinite" }}>
+        <svg viewBox="0 0 48 48" fill="none" className="w-8 h-8">
+          <rect x="4" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
+          <rect x="8" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
+          <rect x="28" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
+          <rect x="32" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
+          <rect x="4" y="28" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
+          <rect x="8" y="32" width="8" height="8" rx="1" fill="#CAFF00"/>
+        </svg>
+      </div>
+      <p style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", fontSize: "16px" }}>
+        CARGANDO PLAYLIST...
+      </p>
+      <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
+        Obteniendo canciones de Spotify
+      </p>
+    </div>
+  );
+
+  if (showModeSelection) return <ModeSelection onSelectNormal={handleModeNormal} onSelectBingo={handleModeBingo} onInstructions={() => {}} />;
   if (showPlaylistScanner) return <PlaylistScanner onPlaylistScanned={handlePlaylistScanned} onError={() => setIsError(true)} onCancel={handleBackToModes} />;
   if (showBingoPlayer) return <BingoPlayer playlist={currentPlaylist} onBack={handleBingoBack} />;
   if (showReady) return <ReadyToPlay onStart={handleStartPlay} onCancel={handleBackToModes} />;
@@ -201,12 +229,9 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   if (isError) return <ErrorView onRetry={resetScanner} />;
 
   return isScanning ? (
-    /* QR Scanner view */
     <div className="w-full max-w-sm flex flex-col items-center gap-4">
-      <div
-        className="w-full rounded-2xl overflow-hidden"
-        style={{ border: "1.5px solid rgba(202,255,0,0.2)", boxShadow: "0 0 40px rgba(202,255,0,0.08)" }}
-      >
+      <div className="w-full rounded-2xl overflow-hidden"
+        style={{ border: "1.5px solid rgba(202,255,0,0.2)", boxShadow: "0 0 40px rgba(202,255,0,0.08)" }}>
         <QrScanner
           onDecode={handleScan}
           onError={() => { setIsError(true); setIsScanning(false); }}
@@ -216,52 +241,35 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
           constraints={{ facingMode: "environment" }}
         />
       </div>
-      <p
-        className="text-xs font-bold tracking-widest uppercase text-center"
-        style={{ color: "rgba(245,242,235,0.25)", fontFamily: "Raleway, sans-serif" }}
-      >
+      <p className="text-xs font-bold tracking-widest uppercase text-center"
+        style={{ color: "rgba(245,242,235,0.25)" }}>
         Apunta al QR de la carta
       </p>
-      <button
-        onClick={handleBackToModes}
+      <button onClick={handleBackToModes}
         className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
-      >
+        style={{ color: "rgba(245,242,235,0.2)" }}>
         ← Cambiar modo
       </button>
     </div>
   ) : selectedMode === "normal" ? (
-    /* Normal mode home */
     <div className="flex flex-col items-center gap-6 w-full max-w-sm">
       <ScanButton onClick={() => setIsScanning(true)} />
-
-      <p
-        className="text-xs text-center font-bold tracking-wider"
-        style={{ color: "rgba(245,242,235,0.25)", fontFamily: "Raleway, sans-serif" }}
-      >
+      <p className="text-xs text-center font-bold tracking-wider"
+        style={{ color: "rgba(245,242,235,0.25)" }}>
         Previews de 30 segundos · Funciona para todos
       </p>
-
-      <button
-        onClick={handleBackToModes}
+      <button onClick={handleBackToModes}
         className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
-      >
+        style={{ color: "rgba(245,242,235,0.2)" }}>
         ← Cambiar modo
       </button>
     </div>
   ) : (
     <div className="flex flex-col items-center gap-4 text-center">
       <div className="text-5xl">🎵</div>
-      <h2
-        className="text-xl"
-        style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(245,242,235,0.6)" }}
-      >
+      <h2 className="text-xl" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(245,242,235,0.6)" }}>
         ScanHits
       </h2>
-      <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
-        Previews de 30 segundos
-      </p>
     </div>
   );
 }

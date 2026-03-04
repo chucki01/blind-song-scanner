@@ -21,71 +21,96 @@ export const SongHistoryModal: React.FC<SongHistoryModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-      <div className="bg-gray-900 rounded-xl max-w-md w-full max-h-[80vh] overflow-hidden">
+    <div className="fixed inset-0 flex items-end justify-center z-50"
+      style={{ background: "rgba(0,0,0,0.85)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-sm rounded-t-3xl overflow-hidden"
+        style={{ background: "#0f0f0f", border: "1px solid rgba(202,255,0,0.15)", maxHeight: "80vh" }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Handle */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }} />
+        </div>
+
         {/* Header */}
-        <div className="bg-purple-600 p-4 flex items-center justify-between">
-          <h2 className="text-white text-xl font-bold">📋 Canciones Reproducidas</h2>
-          <button
-            onClick={onClose}
-            className="text-white hover:text-gray-300 text-2xl"
-          >
+        <div className="flex items-center justify-between px-5 py-4">
+          <div>
+            <h2 style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", color: "#CAFF00" }}>
+              CANCIONES SONADAS
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: "rgba(245,242,235,0.3)" }}>
+              {songs.length} canción{songs.length !== 1 ? "es" : ""} reproducida{songs.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-70"
+            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(245,242,235,0.5)", fontSize: "14px" }}>
             ✕
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
+        {/* Divider */}
+        <div className="mx-5 h-px" style={{ background: "rgba(202,255,0,0.1)" }} />
+
+        {/* List */}
+        <div className="overflow-y-auto px-5 py-4" style={{ maxHeight: "55vh", WebkitOverflowScrolling: "touch" }}>
           {songs.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-6xl mb-4">🎵</div>
-              <p className="text-gray-400">
-                Aún no se han reproducido canciones
+            <div className="text-center py-10">
+              <div className="text-4xl mb-3">🎵</div>
+              <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
+                Aún no hay canciones reproducidas
               </p>
             </div>
           ) : (
-            <>
-              <p className="text-gray-400 text-sm mb-4 text-center">
-                Total: {songs.length} canción{songs.length !== 1 ? 'es' : ''}
-              </p>
-              <div className="max-h-96 overflow-y-auto space-y-3">
-                {songs.map((song, index) => (
-                  <div
-                    key={song.id}
-                    className="bg-gray-800 rounded-lg p-3 border-l-4 border-purple-400"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-semibold text-sm truncate">
-                          {song.name}
-                        </h3>
-                        <p className="text-gray-400 text-xs truncate">
-                          {song.artist}
-                        </p>
-                      </div>
-                      <div className="text-right ml-3">
-                        <div className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                          #{index + 1}
-                        </div>
-                        <p className="text-gray-500 text-xs mt-1">
-                          {song.playedAt}
-                        </p>
-                      </div>
-                    </div>
+            <div className="flex flex-col gap-2">
+              {[...songs].reverse().map((song, index) => (
+                <div key={song.id + index}
+                  className="flex items-center gap-3 rounded-2xl p-3"
+                  style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  {/* Number badge */}
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                    style={{
+                      background: index === 0 ? "#CAFF00" : "rgba(202,255,0,0.1)",
+                      color: index === 0 ? "#000" : "rgba(202,255,0,0.6)",
+                      fontFamily: "'Russo One', sans-serif",
+                    }}>
+                    {songs.length - index}
                   </div>
-                ))}
-              </div>
-            </>
+                  {/* Song info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold truncate" style={{ color: "#f5f2eb" }}>
+                      {song.name}
+                    </p>
+                    <p className="text-xs truncate" style={{ color: "rgba(245,242,235,0.4)" }}>
+                      {song.artist}
+                    </p>
+                  </div>
+                  {/* Time */}
+                  <p className="text-xs flex-shrink-0" style={{ color: "rgba(245,242,235,0.25)" }}>
+                    {song.playedAt}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-800 p-4 text-center">
-          <button
-            onClick={onClose}
-            className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition-colors"
-          >
-            Cerrar
+        <div className="px-5 pb-6 pt-3">
+          <button onClick={onClose}
+            className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
+            style={{
+              background: "rgba(202,255,0,0.07)",
+              border: "1.5px solid rgba(202,255,0,0.2)",
+              color: "#CAFF00",
+              fontFamily: "'Russo One', sans-serif",
+              fontSize: "14px",
+              letterSpacing: "0.1em",
+            }}>
+            CERRAR
           </button>
         </div>
       </div>

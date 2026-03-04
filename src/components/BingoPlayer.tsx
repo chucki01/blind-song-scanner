@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SongHistoryModal } from "./SongHistoryModal.tsx";
 
 interface Song {
@@ -19,13 +19,27 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
   const [playedSongs, setPlayedSongs] = useState<Song[]>([]);
   const [availableSongs, setAvailableSongs] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
   const [songProgress, setSongProgress] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Refs to avoid stale closure bugs
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isPlayingRef = useRef(false);
+  const availableSongsRef = useRef<any[]>([]);
 
   useEffect(() => {
-    setAvailableSongs([...playlist]);
+    const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+    setAvailableSongs(shuffled);
+    availableSongsRef.current = shuffled;
   }, [playlist]);
+
+  const clearProgress = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
   const getPreviewUrl = async (trackId: string): Promise<string | null> => {
     try {
@@ -36,77 +50,138 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     } catch { return null; }
   };
 
-  const selectRandomSong = () => {
-    if (availableSongs.length === 0) {
-      alert("¡Todas las canciones han sido reproducidas!");
-      setIsPlaying(false);
-      return null;
-    }
-    const randomIndex = Math.floor(Math.random() * availableSongs.length);
-    const selectedSong = availableSongs[randomIndex];
-    setAvailableSongs(prev => prev.filter((_, i) => i !== randomIndex));
-    return selectedSong;
-  };
+  const playNextSong = useCallback(async () => {
+    if (!isPlayingRef.current) return;
 
-  const playNextSong = async () => {
-    const nextSong = selectRandomSong();
-    if (!nextSong) return;
+    const available = availableSongsRef.current;
+    if (available.length === 0) {
+      alert("¡Todas las canciones han sido reproducidas!");
+      isPlayingRef.current = false;
+      setIsPlaying(false);
+      return;
+    }
+
+    // Pick random
+    const randomIndex = Math.floor(Math.random() * available.length);
+    const nextSong = available[randomIndex];
+    const newAvailable = available.filter((_, i) => i !== randomIndex);
+    availableSongsRef.current = newAvailable;
+    setAvailableSongs(newAvailable);
     setCurrentSong(nextSong);
     setSongProgress(0);
+    setIsLoading(true);
+    clearProgress();
+
+    // Stop previous audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current = null;
+    }
+
     const previewUrl = await getPreviewUrl(nextSong.id);
-    if (previewUrl) {
-      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-      const audio = new Audio(previewUrl);
-      setCurrentAudio(audio);
-      audio.play().then(() => {
-        const songRecord: Song = {
-          id: nextSong.id,
-          name: nextSong.name,
-          artist: nextSong.artists?.map((a: any) => a.name).join(", ") || "Artista desconocido",
-          playedAt: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-        };
-        setPlayedSongs(prev => [...prev, songRecord]);
-        let progress = 0;
-        intervalRef.current = setInterval(() => {
-          progress += 1;
-          setSongProgress(progress);
-          if (progress >= 30) {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            if (isPlaying) setTimeout(playNextSong, 1000);
-          }
-        }, 1000);
-      });
-      audio.onended = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        if (isPlaying) setTimeout(playNextSong, 1000);
-      };
-    } else {
-      alert(`Sin preview para "${nextSong.name}". Saltando...`);
-      if (isPlaying) setTimeout(playNextSong, 500);
-    }
-  };
+    setIsLoading(false);
 
-  const handlePlayPause = () => {
+    if (!isPlayingRef.current) return; // paused while loading
+
+    if (!previewUrl) {
+      // Skip silently
+      setTimeout(playNextSong, 300);
+      return;
+    }
+
+    const audio = new Audio(previewUrl);
+    audioRef.current = audio;
+
+    // iOS/Android: load before play
+    audio.load();
+
+    try {
+      await audio.play();
+    } catch {
+      setTimeout(playNextSong, 300);
+      return;
+    }
+
+    // Add to history
+    const songRecord: Song = {
+      id: nextSong.id,
+      name: nextSong.name,
+      artist: nextSong.artists?.map((a: any) => a.name).join(", ") || "Artista desconocido",
+      playedAt: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+    };
+    setPlayedSongs(prev => [...prev, songRecord]);
+
+    // Progress timer
+    let progress = 0;
+    intervalRef.current = setInterval(() => {
+      progress += 1;
+      setSongProgress(progress);
+      if (progress >= 30) {
+        clearProgress();
+        setTimeout(playNextSong, 800);
+      }
+    }, 1000);
+
+    audio.onended = () => {
+      clearProgress();
+      setTimeout(playNextSong, 800);
+    };
+  }, []);
+
+  const handlePlayPause = async () => {
     if (!isPlaying) {
+      isPlayingRef.current = true;
       setIsPlaying(true);
-      if (!currentSong) { playNextSong(); }
-      else if (currentAudio) { currentAudio.play(); }
+
+      if (!currentSong) {
+        // First play
+        playNextSong();
+      } else if (audioRef.current) {
+        // Resume
+        try {
+          await audioRef.current.play();
+          // Restart progress from where we left off
+          const startProgress = songProgress;
+          let progress = startProgress;
+          intervalRef.current = setInterval(() => {
+            progress += 1;
+            setSongProgress(progress);
+            if (progress >= 30) {
+              clearProgress();
+              setTimeout(playNextSong, 800);
+            }
+          }, 1000);
+        } catch { playNextSong(); }
+      }
     } else {
+      isPlayingRef.current = false;
       setIsPlaying(false);
-      if (currentAudio) currentAudio.pause();
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      clearProgress();
+      if (audioRef.current) audioRef.current.pause();
     }
   };
 
+  const handleSkip = () => {
+    clearProgress();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.onended = null;
+      audioRef.current = null;
+    }
+    playNextSong();
+  };
+
+  // Cleanup
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (currentAudio) currentAudio.pause();
+      clearProgress();
+      if (audioRef.current) audioRef.current.pause();
     };
-  }, [currentAudio]);
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-5">
+    <div className="flex flex-col items-center p-6 w-full max-w-sm mx-auto gap-5">
 
       {/* Header */}
       <div className="text-center">
@@ -125,8 +200,8 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
         {currentSong ? (
           <>
             <p className="text-xs font-bold tracking-widest uppercase mb-3"
-              style={{ color: "rgba(245,242,235,0.3)" }}>
-              {isPlaying ? "▶ Sonando ahora" : "⏸ Pausado"}
+              style={{ color: isLoading ? "rgba(202,255,0,0.5)" : "rgba(245,242,235,0.3)" }}>
+              {isLoading ? "⏳ Cargando..." : isPlaying ? "▶ Sonando ahora" : "⏸ Pausado"}
             </p>
             <p className="text-lg font-bold mb-1 truncate"
               style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
@@ -135,8 +210,7 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
             <p className="text-sm mb-4 truncate" style={{ color: "rgba(245,242,235,0.4)" }}>
               {currentSong.artists?.map((a: any) => a.name).join(", ")}
             </p>
-            {/* Waveform / progress */}
-            {isPlaying && (
+            {isPlaying && !isLoading && (
               <div className="flex items-center gap-1 h-8 mb-3">
                 {Array.from({ length: 18 }).map((_, i) => (
                   <div key={i} className="flex-1 rounded-sm wave-bar"
@@ -155,7 +229,7 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
           </>
         ) : (
           <p className="text-base text-center py-2" style={{ color: "rgba(245,242,235,0.3)" }}>
-            {isPlaying ? "Cargando canción..." : "Pulsa play para empezar"}
+            Pulsa play para empezar
           </p>
         )}
       </div>
@@ -171,7 +245,8 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
         </div>
         <div className="rounded-2xl p-4 text-center"
           style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="text-2xl font-bold" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(202,255,0,0.5)" }}>
+          <p className="text-2xl font-bold"
+            style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(202,255,0,0.5)" }}>
             {availableSongs.length}
           </p>
           <p className="text-xs mt-1" style={{ color: "rgba(245,242,235,0.3)" }}>Restantes</p>
@@ -180,11 +255,21 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
 
       {/* Controls */}
       <div className="flex gap-3 w-full">
+        {/* Play/Pause */}
         <button onClick={handlePlayPause}
           className="flex-1 py-4 rounded-2xl font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
           style={{ background: "#CAFF00", color: "#000", fontFamily: "'Russo One', sans-serif", fontSize: "16px", boxShadow: "0 8px 30px rgba(202,255,0,0.2)" }}>
           {isPlaying ? "⏸ PAUSAR" : "▶ PLAY"}
         </button>
+        {/* Skip */}
+        {isPlaying && (
+          <button onClick={handleSkip}
+            className="py-4 px-4 rounded-2xl font-bold transition-all hover:opacity-80"
+            style={{ background: "rgba(202,255,0,0.07)", border: "1.5px solid rgba(202,255,0,0.2)", color: "#CAFF00", fontFamily: "'Russo One', sans-serif", fontSize: "18px" }}>
+            ⏭
+          </button>
+        )}
+        {/* History */}
         <button onClick={() => setShowHistory(true)}
           className="py-4 px-4 rounded-2xl font-bold transition-all hover:opacity-80"
           style={{ background: "rgba(202,255,0,0.07)", border: "1.5px solid rgba(202,255,0,0.2)", color: "#CAFF00", fontFamily: "'Russo One', sans-serif", fontSize: "13px" }}>
