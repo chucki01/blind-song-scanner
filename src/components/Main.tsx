@@ -74,10 +74,8 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         ?.split("?")[0];
       if (!playlistId) throw new Error("ID de playlist inválido");
 
-      // accessToken as query param (matches playlist.ts backend)
-      const response = await fetch(
-        `/api/playlist?playlistId=${playlistId}&accessToken=${encodeURIComponent(accessToken)}`
-      );
+      const params = new URLSearchParams({ playlistId, accessToken });
+      const response = await fetch(`/api/playlist?${params.toString()}`);
       if (!response.ok) throw new Error("Error al cargar la playlist");
       const data = await response.json();
 
