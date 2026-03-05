@@ -2,56 +2,87 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { playlistId, accessToken } = req.query;
+  const { playlistId } = req.query;
 
   if (!playlistId || typeof playlistId !== 'string')
     return res.status(400).json({ error: 'playlistId is required' });
-  if (!accessToken || typeof accessToken !== 'string')
-    return res.status(400).json({ error: 'accessToken is required' });
 
   try {
-    const response = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(id,name,artists(name),duration_ms,preview_url))&limit=50`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    // Scraping del embed — igual que preview.ts, sin accessToken
+    const embedUrl = `https://open.spotify.com/embed/playlist/${playlistId}`;
+    const response = await fetch(embedUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+      },
+    });
 
     if (!response.ok) {
-      return res.status(response.status).json({ 
-        error: 'Failed to fetch playlist',
-        status: response.status 
-      });
+      return res.status(response.status).json({ error: 'No se pudo cargar la playlist' });
     }
 
-    const data = await response.json();
+    const html = await response.text();
 
-    const tracks = data.items
-      .filter((item: any) => item.track && item.track.id)
-      .map((item: any) => ({
-        id: item.track.id,
-        name: item.track.name,
-        artists: item.track.artists,
-        duration_ms: item.track.duration_ms,
-        preview_url: item.track.preview_url,
-      }));
+    // Extraer __NEXT_DATA__ igual que hace preview.ts
+    const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+    if (!nextDataMatch) {
+      return res.status(400).json({ error: 'No se encontraron datos en el embed' });
+    }
 
-    return res.status(200).json({ 
+    const nextData = JSON.parse(nextDataMatch[1]);
+
+    // Navegar por la estructura para encontrar las canciones
+    const state = nextData?.props?.pageProps?.state;
+    const entities = state?.data?.entity;
+
+    // trackList está directamente en entity
+    const trackList = entities?.trackList || [];
+
+    if (trackList.length === 0) {
+      // Intentar ruta alternativa
+      const data = nextData?.props?.pageProps?.data;
+      const items = data?.entity?.trackList || [];
+      if (items.length === 0) {
+        return res.status(400).json({ 
+          error: 'Playlist vacía o no pública. Asegúrate de que la playlist sea pública.',
+          total: 0 
+        });
+      }
+    }
+
+    const tracks = trackList
+      .filter((t: any) => t && (t.id || t.uri))
+      .map((t: any) => {
+        // Extraer ID del URI si es necesario (spotify:track:ID)
+        const id = t.id || t.uri?.split(':').pop();
+        const artist = t.subtitle || t.artists?.[0]?.name || 'Artista desconocido';
+        return {
+          id,
+          name: t.title || t.name,
+          artists: [{ name: artist }],
+          duration_ms: t.duration || 180000,
+        };
+      })
+      .filter((t: any) => t.id && t.name);
+
+    console.log(`✅ Playlist ${playlistId}: ${tracks.length} canciones`);
+
+    return res.status(200).json({
       tracks,
       total: tracks.length,
-      success: true
+      success: true,
     });
-    
+
   } catch (error) {
-    console.error('Error fetching playlist:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
