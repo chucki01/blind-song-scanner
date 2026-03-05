@@ -29,15 +29,10 @@ export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, o
         🎵
       </div>
 
-      <div className="text-center">
-        <h2 className="text-3xl tracking-wide mb-2"
-          style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
-          ESCUCHANDO
-        </h2>
-        <p className="text-base" style={{ color: "rgba(245,242,235,0.35)" }}>
-          No mires 😉
-        </p>
-      </div>
+      <h2 className="text-3xl tracking-wide"
+        style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
+        ESCUCHANDO
+      </h2>
 
       <div className="w-full rounded-2xl p-5"
         style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
