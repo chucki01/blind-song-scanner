@@ -98,22 +98,6 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     const preview = await getPreviewUrl(result);
     if (preview) {
       setPreviewUrl(preview);
-      // Pedir permiso giroscopio si es necesario (iOS)
-      if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-        try {
-          const permission = await (DeviceOrientationEvent as any).requestPermission();
-          if (permission !== "granted") {
-            alert("Necesitamos permiso del giroscopio");
-            setScannedUrl(null);
-            setIsScanning(true);
-            return;
-          }
-        } catch {
-          setScannedUrl(null);
-          setIsScanning(true);
-          return;
-        }
-      }
       setShowFlipAndPlay(true);
     } else {
       alert("Esta canción no tiene preview.\n\nPrueba con otra canción.");
