@@ -114,13 +114,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart, onInstructions 
         CÓMO SE JUEGA
       </button>
 
-      {/* Fine print */}
-      <p
-        className="text-xs text-center"
-        style={{ color: "rgba(245,242,235,0.2)", fontFamily: "Raleway, sans-serif" }}
-      >
-        Funciona con cuenta Spotify Free y Premium
-      </p>
+
     </div>
   );
 };
