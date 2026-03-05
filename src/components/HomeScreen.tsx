@@ -66,6 +66,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
           >
             HITS
           </h1>
+        </div>
       </div>
 
       {/* Tagline */}
