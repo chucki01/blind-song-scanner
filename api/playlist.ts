@@ -16,60 +16,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'accessToken is required' });
 
   try {
-    console.log('🎵 Cargando playlist:', playlistId);
-
-    // Spotify API usa "track" no "item" en el campo fields
-    const tracksResponse = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/items?fields=items(track(id,name,artists(name),duration_ms,is_local))&limit=50`,
+    const response = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(id,name,artists(name),duration_ms,preview_url))&limit=50`,
       {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
 
-    console.log('📡 Spotify response:', tracksResponse.status);
-
-    if (!tracksResponse.ok) {
-      const errorText = await tracksResponse.text();
-      console.log('❌ Error details:', errorText);
-      return res.status(tracksResponse.status).json({
-        error: 'No se pudo cargar la playlist.',
-        details: errorText,
+    if (!response.ok) {
+      return res.status(response.status).json({ 
+        error: 'Failed to fetch playlist',
+        status: response.status 
       });
     }
 
-    const tracksData = await tracksResponse.json();
-    console.log('✅ Items recibidos:', tracksData.items?.length);
+    const data = await response.json();
 
-    // Campo correcto: item.track (no item.item)
-    const tracks = (tracksData.items || [])
-      .filter((item: any) => item.track && item.track.id && !item.track.is_local)
+    const tracks = data.items
+      .filter((item: any) => item.track && item.track.id)
       .map((item: any) => ({
         id: item.track.id,
         name: item.track.name,
-        artists: item.track.artists || [{ name: 'Artista Desconocido' }],
-        duration_ms: item.track.duration_ms || 180000,
+        artists: item.track.artists,
+        duration_ms: item.track.duration_ms,
+        preview_url: item.track.preview_url,
       }));
 
-    console.log('✅ Tracks procesados:', tracks.length);
-
-    if (tracks.length === 0) {
-      return res.status(400).json({
-        error: 'La playlist está vacía o no tiene canciones válidas.',
-        total: 0,
-      });
-    }
-
-    return res.status(200).json({
+    return res.status(200).json({ 
       tracks,
       total: tracks.length,
-      success: true,
+      success: true
     });
-
+    
   } catch (error) {
-    console.error('💥 Error inesperado:', error);
-    return res.status(500).json({ error: 'Error interno del servidor.' });
+    console.error('Error fetching playlist:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
