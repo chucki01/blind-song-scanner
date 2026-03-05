@@ -20,26 +20,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
         transition: "opacity 0.6s ease, transform 0.6s ease",
       }}
     >
-      {/* Waveform animada de fondo */}
+      {/* Logo */}
       <div className="relative flex items-center justify-center w-full">
-        {/* Waveform decorativa */}
-        <div className="absolute flex items-center gap-[3px] opacity-20"
-          style={{ height: "80px" }}>
-          {Array.from({ length: 32 }).map((_, i) => (
-            <div
-              key={i}
-              className="rounded-full wave-bar"
-              style={{
-                width: "4px",
-                background: "#CAFF00",
-                height: `${20 + Math.sin(i * 0.5) * 30 + Math.random() * 20}px`,
-                animationDelay: `${i * 0.06}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Logo centrado sobre la waveform */}
         <div className="relative flex flex-col items-center gap-1 z-10">
           <div
             className="w-24 h-24 rounded-3xl flex items-center justify-center mb-2"
@@ -84,7 +66,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
           >
             HITS
           </h1>
-        </div>
       </div>
 
       {/* Tagline */}

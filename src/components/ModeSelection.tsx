@@ -95,7 +95,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
         letterSpacing: "0.1em",
       }}
     >
-      ? CÓMO SE JUEGA
+      CÓMO SE JUEGA
     </button>
 
     <div className="mt-8 rounded-xl p-4 w-full"
