@@ -98,26 +98,28 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     const preview = await getPreviewUrl(result);
     if (preview) {
       setPreviewUrl(preview);
-      setShowReady(true);
+      // Pedir permiso giroscopio si es necesario (iOS)
+      if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
+        try {
+          const permission = await (DeviceOrientationEvent as any).requestPermission();
+          if (permission !== "granted") {
+            alert("Necesitamos permiso del giroscopio");
+            setScannedUrl(null);
+            setIsScanning(true);
+            return;
+          }
+        } catch {
+          setScannedUrl(null);
+          setIsScanning(true);
+          return;
+        }
+      }
+      setShowFlipAndPlay(true);
     } else {
       alert("Esta canción no tiene preview.\n\nPrueba con otra canción.");
       setScannedUrl(null);
       setIsScanning(true);
     }
-  };
-
-  const handleStartPlay = async () => {
-    if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-      try {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
-        if (permission !== "granted") {
-          alert("Necesitamos permiso del giroscopio");
-          return;
-        }
-      } catch { return; }
-    }
-    setShowReady(false);
-    setShowFlipAndPlay(true);
   };
 
   const handleSongEnded = () => {
@@ -220,7 +222,6 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   if (showModeSelection) return <ModeSelection onSelectNormal={handleModeNormal} onSelectBingo={handleModeBingo} onInstructions={() => {}} />;
   if (showPlaylistScanner) return <PlaylistScanner onPlaylistScanned={handlePlaylistScanned} onError={() => setIsError(true)} onCancel={handleBackToModes} />;
   if (showBingoPlayer) return <BingoPlayer playlist={currentPlaylist} onBack={handleBingoBack} />;
-  if (showReady) return <ReadyToPlay onStart={handleStartPlay} onCancel={handleBackToModes} />;
   if (showFlipAndPlay && previewUrl) return <FlipAndPlay previewUrl={previewUrl} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
   if (showDone) return <SongDone onNext={resetScanner} onReset={handleBackToModes} />;
   if (isError) return <ErrorView onRetry={resetScanner} />;
