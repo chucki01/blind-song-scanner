@@ -85,7 +85,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
     {/* Instructions button */}
     <button
       onClick={onInstructions}
-      className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
+      className="w-full mt-4 py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
       style={{
         background: "rgba(255,255,255,0.03)",
         border: "1px solid rgba(255,255,255,0.08)",
@@ -97,14 +97,5 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
     >
       CÓMO SE JUEGA
     </button>
-
-    <div className="mt-8 rounded-xl p-4 w-full"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-      <p className="text-sm text-center leading-relaxed" style={{ color: "rgba(245,242,235,0.3)" }}>
-        <span style={{ color: "#CAFF00" }}>Normal:</span> escanea el QR, suena la canci&oacute;n, &iexcl;adiv&iacute;nala!
-        &nbsp;&middot;&nbsp;
-        <span style={{ color: "rgba(202,255,0,0.6)" }}>Bingo:</span> canciones en tu cart&oacute;n
-      </p>
-    </div>
   </div>
 );
