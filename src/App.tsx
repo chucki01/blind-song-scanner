@@ -33,7 +33,7 @@ function App() {
           )}
 
           {!started ? (
-            <HomeScreen onStart={() => setStarted(true)} />
+            <HomeScreen onStart={() => setStarted(true)} onInstructions={() => {}} />
           ) : (
             <Main
               accessToken=""

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 
 interface HomeScreenProps {
   onStart: () => void;
+  onInstructions: () => void;
 }
 
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
+export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart, onInstructions }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -95,6 +96,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart }) => {
         }}
       >
         ▶ JUGAR
+      </button>
+
+      {/* Botón cómo se juega */}
+      <button
+        onClick={onInstructions}
+        className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          color: "rgba(245,242,235,0.4)",
+          fontFamily: "'Russo One', sans-serif",
+          fontSize: "14px",
+          letterSpacing: "0.1em",
+        }}
+      >
+        CÓMO SE JUEGA
       </button>
 
       {/* Fine print */}
