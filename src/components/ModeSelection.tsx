@@ -14,9 +14,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
   <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
 
     <div className="relative flex items-center justify-center mb-10">
-      <div className="absolute w-40 h-40 rounded-full border border-[#CAFF00]/10 ring-pulse" />
-      <div className="absolute w-56 h-56 rounded-full border border-[#CAFF00]/07 ring-pulse" />
-      <div className="absolute w-72 h-72 rounded-full border border-[#CAFF00]/05 ring-pulse" />
       <div
         className="relative w-28 h-28 rounded-2xl flex items-center justify-center"
         style={{
@@ -82,7 +79,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
       </button>
     </div>
 
-    {/* Instructions button */}
     <button
       onClick={onInstructions}
       className="w-full mt-4 py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
