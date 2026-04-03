@@ -50,7 +50,6 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     clearProgress();
   };
 
-  // Igual que el modo normal — scraping del embed, sin accessToken
   const getPreviewUrl = async (trackId: string): Promise<string | null> => {
     try {
       const response = await fetch(`/api/preview?trackId=${trackId}`);
@@ -84,7 +83,6 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     setIsLoading(false);
 
     if (!previewUrl) {
-      // Saltar silenciosamente
       if (availableSongsRef.current.length > 0) {
         setTimeout(playNextSong, 300);
       } else {
@@ -104,7 +102,6 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
       return;
     }
 
-    // Añadir al historial
     const songRecord: Song = {
       id: nextSong.id,
       name: nextSong.name,
@@ -113,7 +110,6 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     };
     setPlayedSongs(prev => [...prev, songRecord]);
 
-    // Progreso
     let progress = 0;
     intervalRef.current = setInterval(() => {
       progress += 1;
@@ -229,21 +225,18 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
         </div>
       )}
 
-      {/* REVEAL — nombre de la canción */}
-      {state === "reveal" && currentSong && (
+      {/* REVEAL — sin datos de la canción */}
+      {state === "reveal" && (
         <>
           <div className="w-full rounded-2xl p-6 text-center"
             style={{ background: "#111111", border: "1.5px solid rgba(202,255,0,0.25)", boxShadow: "0 0 40px rgba(202,255,0,0.08)" }}>
             <p className="text-xs font-bold tracking-widest uppercase mb-4"
               style={{ color: "rgba(202,255,0,0.5)" }}>
-              🎯 CANCIÓN REVELADA
+              ⏱ TIEMPO AGOTADO
             </p>
-            <p className="text-2xl font-bold mb-2"
-              style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
-              {currentSong.name}
-            </p>
-            <p className="text-base" style={{ color: "rgba(245,242,235,0.5)" }}>
-              {currentSong.artists?.map((a: any) => a.name).join(", ")}
+            <p className="text-lg font-bold"
+              style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(245,242,235,0.4)" }}>
+              ¿La has marcado en tu cartón?
             </p>
           </div>
           <button onClick={handleNext}
@@ -254,7 +247,7 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
         </>
       )}
 
-      {/* Stats + Historial — siempre visible */}
+      {/* Stats + Historial */}
       <div className="w-full grid grid-cols-2 gap-3">
         <div className="rounded-2xl p-4 text-center"
           style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
