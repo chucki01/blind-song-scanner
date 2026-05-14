@@ -212,8 +212,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   if (showPlaylistScanner) return <PlaylistScanner onPlaylistScanned={handlePlaylistScanned} onError={() => setIsError(true)} onCancel={handleBackToModes} />;
   if (showBingoPlayer) return <BingoPlayer playlist={currentPlaylist} onBack={handleBingoBack} />;
   if (showReady && previewUrl) return <ReadyToFlip previewUrl={previewUrl} isFree={isFreeAccount} onReady={handleReady} onCancel={handleBackToModes} />;
-  if (showFlipAndPlay && preloadedAudio && !isPlaying) return <WaitingForFlip audio={preloadedAudio} onFlipped={() => setIsPlaying(true)} onCancel={handleBackToModes} />;
-  if (showFlipAndPlay && preloadedAudio && isPlaying) return <FlipAndPlay audio={preloadedAudio} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
+  if (showFlipAndPlay && preloadedAudio) return <FlipAndPlay audio={preloadedAudio} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
   if (showDone) return <SongDone onNext={resetScanner} onReset={handleBackToModes} />;
   if (isError) return <ErrorView onRetry={resetScanner} />;
 
