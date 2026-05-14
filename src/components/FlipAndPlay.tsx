@@ -1,29 +1,31 @@
 import React, { useEffect, useRef } from "react";
 
 interface FlipAndPlayProps {
-  previewUrl: string;
+  audio: HTMLAudioElement;
   onEnded: () => void;
   onCancel: () => void;
 }
 
-export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, onCancel }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-
+export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ audio, onEnded, onCancel }) => {
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play().catch((e) => console.error("Error reproduciendo:", e));
-    }
-  }, []);
+    // El audio ya está sonando (lo arrancó WaitingForFlip), solo conectamos los eventos
+    audio.onended = onEnded;
+    audio.onerror = () => { alert("Error reproduciendo. Intenta otra canción."); onCancel(); };
+
+    return () => {
+      audio.onended = null;
+      audio.onerror = null;
+    };
+  }, [audio, onEnded, onCancel]);
+
+  const handleCancel = () => {
+    audio.pause();
+    audio.currentTime = 0;
+    onCancel();
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-8 min-h-[60vh]">
-      <audio
-        ref={audioRef}
-        src={previewUrl}
-        onEnded={onEnded}
-        onError={() => { alert("Error reproduciendo. Intenta otra canción."); onCancel(); }}
-      />
-
       <div className="w-24 h-24 rounded-full flex items-center justify-center text-5xl"
         style={{ background: "rgba(232,23,93,0.07)", border: "2px solid rgba(232,23,93,0.25)", boxShadow: "0 0 40px rgba(232,23,93,0.1)" }}>
         🎵
@@ -44,7 +46,7 @@ export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, o
         </div>
       </div>
 
-      <button onClick={onCancel}
+      <button onClick={handleCancel}
         className="text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
         style={{ color: "rgba(0,0,0,0.25)" }}>
         Cancelar

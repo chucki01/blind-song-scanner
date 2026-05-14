@@ -1,23 +1,47 @@
 import React, { useState } from "react";
 
 interface ReadyToFlipProps {
-  onReady: () => void;
+  onReady: (audio: HTMLAudioElement) => void;
   onCancel: () => void;
   isFree: boolean;
+  previewUrl: string;
 }
 
-export const ReadyToFlip: React.FC<ReadyToFlipProps> = ({ onReady, onCancel, isFree }) => {
+export const ReadyToFlip: React.FC<ReadyToFlipProps> = ({ onReady, onCancel, isFree, previewUrl }) => {
   const [requesting, setRequesting] = useState(false);
 
   const handleRequestPermission = async () => {
     setRequesting(true);
+
+    // Crear y pre-cargar el audio AQUÍ, dentro del gesto del usuario
+    const audio = new Audio(previewUrl);
+    audio.load();
+
+    // En iOS necesitamos llamar a play() y pausar inmediatamente
+    // para "desbloquear" el audio context dentro del gesto del usuario
+    try {
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+    } catch {
+      // Si falla el pre-unlock no es crítico, intentamos igualmente
+    }
+
     if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
       try {
         const permission = await (DeviceOrientationEvent as any).requestPermission();
-        if (permission === "granted") { onReady(); }
-        else { alert("Se necesita permiso para usar el giroscopio"); setRequesting(false); }
-      } catch { setRequesting(false); }
-    } else { onReady(); }
+        if (permission === "granted") {
+          onReady(audio);
+        } else {
+          alert("Se necesita permiso para usar el giroscopio");
+          setRequesting(false);
+        }
+      } catch {
+        setRequesting(false);
+      }
+    } else {
+      onReady(audio);
+    }
   };
 
   return (
@@ -44,10 +68,10 @@ export const ReadyToFlip: React.FC<ReadyToFlipProps> = ({ onReady, onCancel, isF
           { n: "2", text: "Gira el móvil boca abajo", highlight: true },
           { n: "3", text: "La canción empieza sola" },
           { n: "4", text: "Escucha sin mirar 😉" },
-        ].map(({ n, text, highlight }) => (
+        ].map(({ n, text, highlight }: { n: string; text: string; highlight?: boolean }) => (
           <div key={n} className="flex items-center gap-4">
             <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold"
-              style={{ background: highlight ? "#E8175D" : "rgba(232,23,93,0.1)", color: highlight ? "#000" : "#E8175D", fontFamily: "'Russo One', sans-serif" }}>
+              style={{ background: highlight ? "#E8175D" : "rgba(232,23,93,0.1)", color: highlight ? "#fff" : "#E8175D", fontFamily: "'Russo One', sans-serif" }}>
               {n}
             </div>
             <span className="text-base font-bold"

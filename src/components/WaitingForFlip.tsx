@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 interface WaitingForFlipProps {
   onFlipped: () => void;
   onCancel: () => void;
+  audio: HTMLAudioElement;
 }
 
-export const WaitingForFlip: React.FC<WaitingForFlipProps> = ({ onFlipped, onCancel }) => {
+export const WaitingForFlip: React.FC<WaitingForFlipProps> = ({ onFlipped, onCancel, audio }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -13,12 +14,15 @@ export const WaitingForFlip: React.FC<WaitingForFlipProps> = ({ onFlipped, onCan
       const beta = event.beta || 0;
       if (Math.abs(beta) > 150 && !isFlipped) {
         setIsFlipped(true);
+        // Reproducir el audio pre-cargado — iOS lo permite porque fue desbloqueado en el tap
+        audio.currentTime = 0;
+        audio.play().catch((e) => console.error("Error al reproducir:", e));
         onFlipped();
       }
     };
     window.addEventListener("deviceorientation", handleOrientation);
     return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, [isFlipped, onFlipped]);
+  }, [isFlipped, onFlipped, audio]);
 
   return (
     <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto gap-8 min-h-[60vh]">

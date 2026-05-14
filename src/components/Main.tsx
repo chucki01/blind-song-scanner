@@ -6,6 +6,8 @@ import { ModeSelection } from "./ModeSelection.tsx";
 import { PlaylistScanner } from "./PlaylistScanner.tsx";
 import { BingoPlayer } from "./BingoPlayer.tsx";
 import { ReadyToPlay } from "./ReadyToPlay.tsx";
+import { ReadyToFlip } from "./ReadyToFlip.tsx";
+import { WaitingForFlip } from "./WaitingForFlip.tsx";
 import { FlipAndPlay } from "./FlipAndPlay.tsx";
 import { SongDone } from "./SongDone.tsx";
 import { QrScanner } from "@yudiel/react-qr-scanner";
@@ -26,6 +28,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [showReady, setShowReady] = useState(false);
   const [showFlipAndPlay, setShowFlipAndPlay] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [preloadedAudio, setPreloadedAudio] = useState<HTMLAudioElement | null>(null);
   const [showDone, setShowDone] = useState(false);
 
   const [showModeSelection, setShowModeSelection] = useState(false);
@@ -97,7 +100,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     const preview = await getPreviewUrl(result);
     if (preview) {
       setPreviewUrl(preview);
-      setShowFlipAndPlay(true);
+      setShowReady(true); // Primero mostramos ReadyToFlip para que el usuario haga tap
     } else {
       alert("Esta canción no tiene preview.\n\nPrueba con otra canción.");
       setScannedUrl(null);
@@ -105,8 +108,16 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     }
   };
 
+  const handleReady = (audio: HTMLAudioElement) => {
+    setPreloadedAudio(audio);
+    setShowReady(false);
+    setShowFlipAndPlay(true);
+  };
+
   const handleSongEnded = () => {
     setShowFlipAndPlay(false);
+    setIsPlaying(false);
+    setPreloadedAudio(null);
     setShowDone(true);
   };
 
@@ -160,6 +171,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setShowReady(false);
     setShowFlipAndPlay(false);
     setPreviewUrl(null);
+    setPreloadedAudio(null);
     setShowDone(false);
   };
 
@@ -171,6 +183,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setShowReady(false);
     setShowFlipAndPlay(false);
     setPreviewUrl(null);
+    setPreloadedAudio(null);
     setShowDone(false);
     setShowModeSelection(false);
     setSelectedMode(null);
@@ -198,7 +211,9 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   if (showModeSelection) return <ModeSelection onSelectNormal={handleModeNormal} onSelectBingo={handleModeBingo} onInstructions={() => {}} />;
   if (showPlaylistScanner) return <PlaylistScanner onPlaylistScanned={handlePlaylistScanned} onError={() => setIsError(true)} onCancel={handleBackToModes} />;
   if (showBingoPlayer) return <BingoPlayer playlist={currentPlaylist} onBack={handleBingoBack} />;
-  if (showFlipAndPlay && previewUrl) return <FlipAndPlay previewUrl={previewUrl} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
+  if (showReady && previewUrl) return <ReadyToFlip previewUrl={previewUrl} isFree={isFreeAccount} onReady={handleReady} onCancel={handleBackToModes} />;
+  if (showFlipAndPlay && preloadedAudio && !isPlaying) return <WaitingForFlip audio={preloadedAudio} onFlipped={() => setIsPlaying(true)} onCancel={handleBackToModes} />;
+  if (showFlipAndPlay && preloadedAudio && isPlaying) return <FlipAndPlay audio={preloadedAudio} onEnded={handleSongEnded} onCancel={handleBackToModes} />;
   if (showDone) return <SongDone onNext={resetScanner} onReset={handleBackToModes} />;
   if (isError) return <ErrorView onRetry={resetScanner} />;
 
