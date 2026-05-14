@@ -1,3 +1,4 @@
+import { Logo } from "./Logo.tsx";
 import React from "react";
 import { BlackSpotifyIcon } from "./icons/BlackSpotifyIcon.tsx";
 
@@ -9,16 +10,7 @@ interface LoginButtonProps {
 export const LoginButton: React.FC<LoginButtonProps> = ({ href, onInstructions }) => (
   <div className="flex flex-col items-center gap-6 w-full">
 
-    <div
-      className="w-24 h-24 rounded-2xl flex items-center justify-center"
-      style={{
-        background: "rgba(232,23,93,0.07)",
-        border: "1.5px solid rgba(232,23,93,0.2)",
-        animation: "redPulse 2.5s ease-in-out infinite",
-      }}
-    >
-      <span style={{ fontSize: "48px" }}>🎵</span>
-    </div>
+    <Logo />
 
     {/* Login button */}
     <a

@@ -1,3 +1,4 @@
+import { Logo } from "./Logo.tsx";
 import React, { useEffect, useRef, useState } from "react";
 import { SongHistoryModal } from "./SongHistoryModal.tsx";
 
@@ -141,11 +142,8 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     <div className="flex flex-col items-center p-6 w-full max-w-sm mx-auto gap-6">
 
       {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl tracking-wide mb-1"
-          style={{ fontFamily: "'Russo One', sans-serif", color: "#1B4F9B" }}>
-          MODO BINGO
-        </h2>
+      <div className="flex flex-col items-center gap-1">
+        <Logo />
         <p className="text-sm" style={{ color: "rgba(0,0,0,0.3)" }}>
           {playlist.length} canciones · {availableSongs.length} restantes
         </p>
