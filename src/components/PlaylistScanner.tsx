@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { QrScanner } from "@yudiel/react-qr-scanner";
+import { Logo } from "./Logo.tsx";
 
 interface PlaylistScannerProps {
   onPlaylistScanned: (playlistUrl: string) => void;
@@ -24,6 +25,8 @@ export const PlaylistScanner: React.FC<PlaylistScannerProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto p-6">
+
+      <Logo />
 
       {isScanning ? (
         <div className="flex flex-col items-center gap-4 w-full">
