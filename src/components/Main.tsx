@@ -37,8 +37,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [isLoadingPlaylist, setIsLoadingPlaylist] = useState(false);
 
   useEffect(() => {
-    const active = isScanning || isError || !!scannedUrl || showReady || showFlipAndPlay || showDone ||
-      showPlaylistScanner;
+    const active = isScanning || isError || !!scannedUrl || showReady || showFlipAndPlay || showDone;
     isActive(active);
   }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone,
     showModeSelection, showPlaylistScanner, showBingoPlayer]);
