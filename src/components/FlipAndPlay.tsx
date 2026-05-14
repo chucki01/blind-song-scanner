@@ -25,28 +25,28 @@ export const FlipAndPlay: React.FC<FlipAndPlayProps> = ({ previewUrl, onEnded, o
       />
 
       <div className="w-24 h-24 rounded-full flex items-center justify-center text-5xl"
-        style={{ background: "rgba(202,255,0,0.08)", border: "2px solid rgba(202,255,0,0.3)", boxShadow: "0 0 40px rgba(202,255,0,0.15)" }}>
+        style={{ background: "rgba(232,23,93,0.07)", border: "2px solid rgba(232,23,93,0.25)", boxShadow: "0 0 40px rgba(232,23,93,0.1)" }}>
         🎵
       </div>
 
       <h2 className="text-3xl tracking-wide"
-        style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
+        style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D" }}>
         ESCUCHANDO
       </h2>
 
       <div className="w-full rounded-2xl p-5"
-        style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "#EFEFEF", border: "1px solid rgba(0,0,0,0.07)" }}>
         <div className="flex items-center gap-1 h-14">
           {Array.from({ length: 18 }).map((_, i) => (
             <div key={i} className="flex-1 rounded-sm wave-bar"
-              style={{ background: "#CAFF00", height: `${30 + Math.random() * 70}%` }} />
+              style={{ background: "#E8175D", height: `${30 + Math.random() * 70}%` }} />
           ))}
         </div>
       </div>
 
       <button onClick={onCancel}
         className="text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.25)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         Cancelar
       </button>
     </div>

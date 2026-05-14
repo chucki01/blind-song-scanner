@@ -5,30 +5,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Raleway:wght@300;400;600;800;900&display=swap');
 
 :root {
-  --acid: #CAFF00;
-  --acid-dim: rgba(202, 255, 0, 0.10);
-  --acid-glow: rgba(202, 255, 0, 0.35);
-  --surface: #111111;
-  --surface2: #1a1a1a;
-  --border: rgba(255, 255, 255, 0.07);
-  --muted: rgba(245, 242, 235, 0.35);
-  --white: #f5f2eb;
+  --red: #E8175D;
+  --red-dim: rgba(232, 23, 93, 0.12);
+  --red-glow: rgba(232, 23, 93, 0.3);
+  --blue: #1B4F9B;
+  --blue-dim: rgba(27, 79, 155, 0.10);
+  --surface: #F4F4F4;
+  --surface2: #EAEAEA;
+  --border: rgba(0, 0, 0, 0.08);
+  --muted: rgba(0, 0, 0, 0.35);
+  --dark: #111111;
 }
 
 body {
   font-family: 'Raleway', sans-serif;
-  background: #080808;
-  color: var(--white);
+  background: #F8F8F8;
+  color: var(--dark);
 }
 
 .font-russo {
   font-family: 'Russo One', sans-serif;
 }
 
-/* Acid glow pulse animation */
-@keyframes acidPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(202,255,0,0.15), 0 0 30px rgba(202,255,0,0.08); }
-  50%       { box-shadow: 0 0 0 14px rgba(202,255,0,0), 0 0 50px rgba(202,255,0,0.2); }
+/* Red pulse animation */
+@keyframes redPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,23,93,0.15), 0 0 30px rgba(232,23,93,0.06); }
+  50%       { box-shadow: 0 0 0 14px rgba(232,23,93,0), 0 0 50px rgba(232,23,93,0.15); }
 }
 
 /* Ring pulse */
@@ -58,9 +60,9 @@ body {
   100% { top: 100%; opacity: 0; }
 }
 
-.animate-acid-pulse  { animation: acidPulse 2.5s ease-in-out infinite; }
-.animate-float       { animation: floatY 3s ease-in-out infinite; }
-.animate-scan-line   { animation: scanLine 2s ease-in-out infinite; }
+.animate-red-pulse  { animation: redPulse 2.5s ease-in-out infinite; }
+.animate-float      { animation: floatY 3s ease-in-out infinite; }
+.animate-scan-line  { animation: scanLine 2s ease-in-out infinite; }
 
 .wave-bar { animation: waveBar 1.2s ease-in-out infinite; }
 .wave-bar:nth-child(1)  { animation-delay: 0.00s; }

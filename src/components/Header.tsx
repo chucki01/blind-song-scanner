@@ -9,30 +9,29 @@ export const Header: React.FC<HeaderProps> = ({ onLogoClick, small }) => (
   <div
     className={`flex flex-col items-center transition-all duration-500 ${small ? "mb-4" : "mb-10"}`}
   >
-    {/* Logo */}
     <h1
       className="font-russo cursor-pointer select-none tracking-tight leading-none"
       style={{ fontFamily: "'Russo One', sans-serif" }}
       onClick={onLogoClick}
     >
       <span
-        className={`block text-center transition-all duration-500 text-[#f5f2eb] ${small ? "text-2xl" : "text-5xl"}`}
+        className={`block text-center transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
+        style={{ color: "#111111" }}
       >
         SCAN
       </span>
       <span
         className={`block text-center transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
-        style={{ color: "#CAFF00", textShadow: "0 0 30px rgba(202,255,0,0.5)" }}
+        style={{ color: "#E8175D" }}
       >
         HITS
       </span>
     </h1>
 
-    {/* Tagline — only when big */}
     {!small && (
       <p
         className="text-xs uppercase mt-3 font-bold whitespace-nowrap"
-        style={{ color: "rgba(245,242,235,0.3)", letterSpacing: "0.2em", fontFamily: "Raleway, sans-serif" }}
+        style={{ color: "#1B4F9B", letterSpacing: "0.2em", fontFamily: "Raleway, sans-serif" }}
       >
         Escanea · Escucha · Adivina
       </p>

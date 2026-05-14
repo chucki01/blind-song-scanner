@@ -22,45 +22,44 @@ export const SongHistoryModal: React.FC<SongHistoryModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-end justify-center z-50"
-      style={{ background: "rgba(0,0,0,0.85)" }}
+      style={{ background: "rgba(0,0,0,0.4)" }}
       onClick={onClose}
     >
       <div
         className="w-full max-w-sm rounded-t-3xl overflow-hidden"
-        style={{ background: "#0f0f0f", border: "1px solid rgba(202,255,0,0.15)", maxHeight: "80vh" }}
+        style={{ background: "#F8F8F8", border: "1px solid rgba(232,23,93,0.12)", maxHeight: "80vh" }}
         onClick={e => e.stopPropagation()}
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.15)" }} />
+          <div className="w-10 h-1 rounded-full" style={{ background: "rgba(0,0,0,0.12)" }} />
         </div>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4">
           <div>
-            <h2 style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", color: "#CAFF00" }}>
+            <h2 style={{ fontFamily: "'Russo One', sans-serif", fontSize: "18px", color: "#1B4F9B" }}>
               CANCIONES SONADAS
             </h2>
-            <p className="text-xs mt-0.5" style={{ color: "rgba(245,242,235,0.3)" }}>
+            <p className="text-xs mt-0.5" style={{ color: "rgba(0,0,0,0.3)" }}>
               {songs.length} canción{songs.length !== 1 ? "es" : ""} reproducida{songs.length !== 1 ? "s" : ""}
             </p>
           </div>
           <button onClick={onClose}
             className="w-8 h-8 rounded-full flex items-center justify-center transition-opacity hover:opacity-70"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(245,242,235,0.5)", fontSize: "14px" }}>
+            style={{ background: "rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.4)", fontSize: "14px" }}>
             ✕
           </button>
         </div>
 
-        {/* Divider */}
-        <div className="mx-5 h-px" style={{ background: "rgba(202,255,0,0.1)" }} />
+        <div className="mx-5 h-px" style={{ background: "rgba(232,23,93,0.1)" }} />
 
         {/* List */}
         <div className="overflow-y-auto px-5 py-4" style={{ maxHeight: "55vh", WebkitOverflowScrolling: "touch" }}>
           {songs.length === 0 ? (
             <div className="text-center py-10">
               <div className="text-4xl mb-3">🎵</div>
-              <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
+              <p className="text-sm" style={{ color: "rgba(0,0,0,0.3)" }}>
                 Aún no hay canciones reproducidas
               </p>
             </div>
@@ -69,27 +68,24 @@ export const SongHistoryModal: React.FC<SongHistoryModalProps> = ({
               {[...songs].reverse().map((song, index) => (
                 <div key={song.id + index}
                   className="flex items-center gap-3 rounded-2xl p-3"
-                  style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  {/* Number badge */}
+                  style={{ background: "#EFEFEF", border: "1px solid rgba(0,0,0,0.05)" }}>
                   <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
                     style={{
-                      background: index === 0 ? "#CAFF00" : "rgba(202,255,0,0.1)",
-                      color: index === 0 ? "#000" : "rgba(202,255,0,0.6)",
+                      background: index === 0 ? "#E8175D" : "rgba(232,23,93,0.1)",
+                      color: index === 0 ? "#fff" : "#E8175D",
                       fontFamily: "'Russo One', sans-serif",
                     }}>
                     {songs.length - index}
                   </div>
-                  {/* Song info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold truncate" style={{ color: "#f5f2eb" }}>
+                    <p className="text-sm font-bold truncate" style={{ color: "#111111" }}>
                       {song.name}
                     </p>
-                    <p className="text-xs truncate" style={{ color: "rgba(245,242,235,0.4)" }}>
+                    <p className="text-xs truncate" style={{ color: "rgba(0,0,0,0.4)" }}>
                       {song.artist}
                     </p>
                   </div>
-                  {/* Time */}
-                  <p className="text-xs flex-shrink-0" style={{ color: "rgba(245,242,235,0.25)" }}>
+                  <p className="text-xs flex-shrink-0" style={{ color: "rgba(0,0,0,0.25)" }}>
                     {song.playedAt}
                   </p>
                 </div>
@@ -103,9 +99,9 @@ export const SongHistoryModal: React.FC<SongHistoryModalProps> = ({
           <button onClick={onClose}
             className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
             style={{
-              background: "rgba(202,255,0,0.07)",
-              border: "1.5px solid rgba(202,255,0,0.2)",
-              color: "#CAFF00",
+              background: "rgba(27,79,155,0.07)",
+              border: "1.5px solid rgba(27,79,155,0.18)",
+              color: "#1B4F9B",
               fontFamily: "'Russo One', sans-serif",
               fontSize: "14px",
               letterSpacing: "0.1em",

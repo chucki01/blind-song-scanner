@@ -143,15 +143,15 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
       {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl tracking-wide mb-1"
-          style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
+          style={{ fontFamily: "'Russo One', sans-serif", color: "#1B4F9B" }}>
           MODO BINGO
         </h2>
-        <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
+        <p className="text-sm" style={{ color: "rgba(0,0,0,0.3)" }}>
           {playlist.length} canciones · {availableSongs.length} restantes
         </p>
       </div>
 
-      {/* IDLE — botón QR grande */}
+      {/* IDLE */}
       {state === "idle" && (
         <div className="flex flex-col items-center gap-4">
           <button
@@ -159,116 +159,112 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
             className="relative flex items-center justify-center rounded-2xl transition-all hover:scale-[1.04] active:scale-[0.97]"
             style={{
               width: "160px", height: "160px",
-              background: "rgba(202,255,0,0.08)",
-              border: "1.5px solid rgba(202,255,0,0.25)",
-              animation: "acidPulse 2.5s ease-in-out infinite",
+              background: "rgba(232,23,93,0.07)",
+              border: "1.5px solid rgba(232,23,93,0.2)",
+              animation: "redPulse 2.5s ease-in-out infinite",
             }}
           >
-            <span className="absolute top-3 left-3 w-5 h-5"
-              style={{ borderTop: "2px solid #CAFF00", borderLeft: "2px solid #CAFF00" }} />
-            <span className="absolute top-3 right-3 w-5 h-5"
-              style={{ borderTop: "2px solid #CAFF00", borderRight: "2px solid #CAFF00" }} />
-            <span className="absolute bottom-3 left-3 w-5 h-5"
-              style={{ borderBottom: "2px solid #CAFF00", borderLeft: "2px solid #CAFF00" }} />
-            <span className="absolute bottom-3 right-3 w-5 h-5"
-              style={{ borderBottom: "2px solid #CAFF00", borderRight: "2px solid #CAFF00" }} />
+            <span className="absolute top-3 left-3 w-5 h-5" style={{ borderTop: "2px solid #E8175D", borderLeft: "2px solid #E8175D" }} />
+            <span className="absolute top-3 right-3 w-5 h-5" style={{ borderTop: "2px solid #E8175D", borderRight: "2px solid #E8175D" }} />
+            <span className="absolute bottom-3 left-3 w-5 h-5" style={{ borderBottom: "2px solid #E8175D", borderLeft: "2px solid #E8175D" }} />
+            <span className="absolute bottom-3 right-3 w-5 h-5" style={{ borderBottom: "2px solid #E8175D", borderRight: "2px solid #E8175D" }} />
             <svg viewBox="0 0 48 48" fill="none" className="w-16 h-16">
-              <rect x="4" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-              <rect x="8" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
-              <rect x="28" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-              <rect x="32" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
-              <rect x="4" y="28" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-              <rect x="8" y="32" width="8" height="8" rx="1" fill="#CAFF00"/>
-              <text x="36" y="42" textAnchor="middle" fontSize="14" fill="#CAFF00" opacity="0.8">♪</text>
-              <rect x="28" y="28" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.7"/>
-              <rect x="35" y="28" width="5" height="5" rx="1" fill="#CAFF00" opacity="0.4"/>
-              <rect x="28" y="35" width="12" height="5" rx="1" fill="#CAFF00" opacity="0.6"/>
+              <rect x="4" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+              <rect x="8" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
+              <rect x="28" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+              <rect x="32" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
+              <rect x="4" y="28" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+              <rect x="8" y="32" width="8" height="8" rx="1" fill="#E8175D"/>
+              <text x="36" y="42" textAnchor="middle" fontSize="14" fill="#E8175D" opacity="0.8">♪</text>
+              <rect x="28" y="28" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.7"/>
+              <rect x="35" y="28" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.4"/>
+              <rect x="28" y="35" width="12" height="5" rx="1" fill="#1B4F9B" opacity="0.6"/>
             </svg>
           </button>
           <span className="text-xs font-bold tracking-widest uppercase"
-            style={{ color: "#CAFF00", letterSpacing: "0.25em", fontFamily: "'Russo One', sans-serif" }}>
+            style={{ color: "#E8175D", letterSpacing: "0.25em", fontFamily: "'Russo One', sans-serif" }}>
             {playedSongs.length === 0 ? "EMPEZAR BINGO" : "SIGUIENTE CANCIÓN"}
           </span>
-          <p className="text-sm text-center" style={{ color: "rgba(245,242,235,0.25)" }}>
+          <p className="text-sm text-center" style={{ color: "rgba(0,0,0,0.25)" }}>
             Previews de 30 segundos · Funciona para todos
           </p>
         </div>
       )}
 
-      {/* PLAYING — solo waveform, sin nombre */}
+      {/* PLAYING */}
       {state === "playing" && (
         <div className="w-full rounded-2xl p-6 text-center"
-          style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
+          style={{ background: "#EFEFEF", border: "1px solid rgba(0,0,0,0.07)" }}>
           <p className="text-xs font-bold tracking-widest uppercase mb-4"
-            style={{ color: isLoading ? "rgba(202,255,0,0.5)" : "rgba(245,242,235,0.3)" }}>
+            style={{ color: isLoading ? "rgba(232,23,93,0.5)" : "rgba(0,0,0,0.3)" }}>
             {isLoading ? "⏳ Cargando..." : "▶ SONANDO"}
           </p>
           {!isLoading && (
             <div className="flex items-center gap-1 h-14 mb-5">
               {Array.from({ length: 20 }).map((_, i) => (
                 <div key={i} className="flex-1 rounded-sm wave-bar"
-                  style={{ background: "#CAFF00", height: `${30 + Math.random() * 70}%` }} />
+                  style={{ background: "#E8175D", height: `${30 + Math.random() * 70}%` }} />
               ))}
             </div>
           )}
-          <div className="w-full rounded-full h-2 mb-2" style={{ background: "rgba(255,255,255,0.08)" }}>
+          <div className="w-full rounded-full h-2 mb-2" style={{ background: "rgba(0,0,0,0.08)" }}>
             <div className="h-2 rounded-full transition-all duration-1000"
-              style={{ width: `${(songProgress / 30) * 100}%`, background: "#CAFF00" }} />
+              style={{ width: `${(songProgress / 30) * 100}%`, background: "#E8175D" }} />
           </div>
           <div className="flex justify-between">
-            <span className="text-sm font-bold" style={{ color: "rgba(245,242,235,0.4)" }}>{songProgress}s</span>
-            <span className="text-sm" style={{ color: "rgba(245,242,235,0.25)" }}>30s</span>
+            <span className="text-sm font-bold" style={{ color: "rgba(0,0,0,0.4)" }}>{songProgress}s</span>
+            <span className="text-sm" style={{ color: "rgba(0,0,0,0.25)" }}>30s</span>
           </div>
-          <p className="text-sm font-bold mt-4" style={{ color: "rgba(245,242,235,0.4)" }}>
+          <p className="text-sm font-bold mt-4" style={{ color: "rgba(0,0,0,0.35)" }}>
             ¿La reconoces? ¡Márcala en tu cartón!
           </p>
         </div>
       )}
 
-      {/* REVEAL — sin datos de la canción */}
+      {/* REVEAL */}
       {state === "reveal" && (
         <>
           <div className="w-full rounded-2xl p-6 text-center"
-            style={{ background: "#111111", border: "1.5px solid rgba(202,255,0,0.25)", boxShadow: "0 0 40px rgba(202,255,0,0.08)" }}>
+            style={{ background: "#EFEFEF", border: "1.5px solid rgba(232,23,93,0.2)", boxShadow: "0 0 40px rgba(232,23,93,0.06)" }}>
             <p className="text-xs font-bold tracking-widest uppercase mb-4"
-              style={{ color: "rgba(202,255,0,0.5)" }}>
+              style={{ color: "rgba(232,23,93,0.6)" }}>
               ⏱ TIEMPO AGOTADO
             </p>
             <p className="text-lg font-bold"
-              style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(245,242,235,0.4)" }}>
+              style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(0,0,0,0.4)" }}>
               ¿La has marcado en tu cartón?
             </p>
           </div>
           <button onClick={handleNext}
             className="w-full py-5 rounded-2xl font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: "#CAFF00", color: "#000", fontFamily: "'Russo One', sans-serif", fontSize: "16px", letterSpacing: "0.1em", boxShadow: "0 8px 30px rgba(202,255,0,0.2)" }}>
+            style={{ background: "#E8175D", color: "#fff", fontFamily: "'Russo One', sans-serif", fontSize: "16px", letterSpacing: "0.1em", boxShadow: "0 8px 30px rgba(232,23,93,0.2)" }}>
             → SIGUIENTE CANCIÓN
           </button>
         </>
       )}
 
-      {/* Stats + Historial */}
+      {/* Stats */}
       <div className="w-full grid grid-cols-2 gap-3">
         <div className="rounded-2xl p-4 text-center"
-          style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="text-2xl font-bold" style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00" }}>
+          style={{ background: "#EFEFEF", border: "1px solid rgba(0,0,0,0.07)" }}>
+          <p className="text-2xl font-bold" style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D" }}>
             {playedSongs.length}
           </p>
-          <p className="text-xs mt-1" style={{ color: "rgba(245,242,235,0.3)" }}>Reproducidas</p>
+          <p className="text-xs mt-1" style={{ color: "rgba(0,0,0,0.3)" }}>Reproducidas</p>
         </div>
         <button onClick={() => setShowHistory(true)}
           className="rounded-2xl p-4 text-center transition-all hover:opacity-80"
-          style={{ background: "#111111", border: "1px solid rgba(202,255,0,0.15)" }}>
-          <p className="text-2xl font-bold" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(202,255,0,0.6)" }}>
+          style={{ background: "#EFEFEF", border: "1px solid rgba(27,79,155,0.15)" }}>
+          <p className="text-2xl font-bold" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(27,79,155,0.6)" }}>
             📋
           </p>
-          <p className="text-xs mt-1" style={{ color: "rgba(245,242,235,0.3)" }}>Ver historial</p>
+          <p className="text-xs mt-1" style={{ color: "rgba(0,0,0,0.3)" }}>Ver historial</p>
         </button>
       </div>
 
       <button onClick={onBack}
         className="text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.25)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         ← Nueva playlist
       </button>
 

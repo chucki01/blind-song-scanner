@@ -12,14 +12,14 @@ function App() {
     <>
       {/* Background rings */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-        <div className="absolute w-64 h-64 rounded-full ring-pulse" style={{ border: "1px solid rgba(202,255,0,0.06)" }} />
-        <div className="absolute w-96 h-96 rounded-full ring-pulse" style={{ border: "1px solid rgba(202,255,0,0.04)" }} />
-        <div className="absolute w-[32rem] h-[32rem] rounded-full ring-pulse" style={{ border: "1px solid rgba(202,255,0,0.02)" }} />
+        <div className="absolute w-64 h-64 rounded-full ring-pulse" style={{ border: "1px solid rgba(232,23,93,0.07)" }} />
+        <div className="absolute w-96 h-96 rounded-full ring-pulse" style={{ border: "1px solid rgba(232,23,93,0.05)" }} />
+        <div className="absolute w-[32rem] h-[32rem] rounded-full ring-pulse" style={{ border: "1px solid rgba(232,23,93,0.03)" }} />
       </div>
 
       <div
         className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative"
-        style={{ background: "#080808", zIndex: 1 }}
+        style={{ background: "#F8F8F8", zIndex: 1 }}
       >
         <div className="w-full max-w-sm flex flex-col items-center">
           {started && (

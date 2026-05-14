@@ -184,20 +184,20 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   if (isLoadingPlaylist) return (
     <div className="flex flex-col items-center justify-center gap-4 p-6">
       <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-        style={{ background: "rgba(202,255,0,0.08)", border: "1.5px solid rgba(202,255,0,0.2)", animation: "acidPulse 1.5s ease-in-out infinite" }}>
+        style={{ background: "rgba(232,23,93,0.07)", border: "1.5px solid rgba(232,23,93,0.2)", animation: "redPulse 1.5s ease-in-out infinite" }}>
         <svg viewBox="0 0 48 48" fill="none" className="w-8 h-8">
-          <rect x="4" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-          <rect x="8" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
-          <rect x="28" y="4" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-          <rect x="32" y="8" width="8" height="8" rx="1" fill="#CAFF00"/>
-          <rect x="4" y="28" width="16" height="16" rx="2" stroke="#CAFF00" strokeWidth="2" fill="none"/>
-          <rect x="8" y="32" width="8" height="8" rx="1" fill="#CAFF00"/>
+          <rect x="4" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+          <rect x="8" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
+          <rect x="28" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+          <rect x="32" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
+          <rect x="4" y="28" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
+          <rect x="8" y="32" width="8" height="8" rx="1" fill="#E8175D"/>
         </svg>
       </div>
-      <p style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", fontSize: "16px" }}>
+      <p style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D", fontSize: "16px" }}>
         CARGANDO PLAYLIST...
       </p>
-      <p className="text-sm" style={{ color: "rgba(245,242,235,0.3)" }}>
+      <p className="text-sm" style={{ color: "rgba(0,0,0,0.3)" }}>
         Obteniendo canciones de Spotify
       </p>
     </div>
@@ -213,7 +213,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   return isScanning ? (
     <div className="w-full max-w-sm flex flex-col items-center gap-4">
       <div className="w-full rounded-2xl overflow-hidden"
-        style={{ border: "1.5px solid rgba(202,255,0,0.2)", boxShadow: "0 0 40px rgba(202,255,0,0.08)" }}>
+        style={{ border: "1.5px solid rgba(232,23,93,0.2)", boxShadow: "0 0 40px rgba(232,23,93,0.06)" }}>
         <QrScanner
           onDecode={handleScan}
           onError={() => { setIsError(true); setIsScanning(false); }}
@@ -224,7 +224,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
         />
       </div>
       <p className="text-xs font-bold tracking-widest uppercase text-center"
-        style={{ color: "rgba(245,242,235,0.25)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         Apunta al QR de la carta
       </p>
       <button onClick={handleBackToModes}
@@ -237,7 +237,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     <div className="flex flex-col items-center gap-6 w-full max-w-sm">
       <ScanButton onClick={() => setIsScanning(true)} />
       <p className="text-xs text-center font-bold tracking-wider"
-        style={{ color: "rgba(245,242,235,0.25)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         Previews de 30 segundos · Funciona para todos
       </p>
       <button onClick={handleBackToModes}
