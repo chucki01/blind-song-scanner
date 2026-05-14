@@ -38,7 +38,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
 
   useEffect(() => {
     const active = isScanning || isError || !!scannedUrl || showReady || showFlipAndPlay || showDone ||
-      showModeSelection || showPlaylistScanner || showBingoPlayer;
+      showPlaylistScanner;
     isActive(active);
   }, [isScanning, isError, scannedUrl, showReady, showFlipAndPlay, showDone,
     showModeSelection, showPlaylistScanner, showBingoPlayer]);
