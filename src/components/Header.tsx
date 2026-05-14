@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "../assets/img/logo.png";
 
 interface HeaderProps {
   onLogoClick: () => void;
@@ -9,13 +8,45 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onLogoClick, small }) => (
   <div
     className={`flex flex-col items-center transition-all duration-500 ${small ? "mb-4" : "mb-10"}`}
+    onClick={onLogoClick}
+    style={{ cursor: "pointer" }}
   >
-    <img
-      src={logo}
-      alt="ScanHits"
-      onClick={onLogoClick}
-      className="cursor-pointer select-none transition-all duration-500"
-      style={{ width: small ? "120px" : "220px" }}
-    />
+    <div style={{ lineHeight: 1 }}>
+      <span
+        style={{
+          fontFamily: "'Russo One', sans-serif",
+          fontSize: small ? "28px" : "52px",
+          color: "#111111",
+          letterSpacing: "-1px",
+        }}
+      >
+        SCAN
+      </span>
+      <span
+        style={{
+          fontFamily: "'Russo One', sans-serif",
+          fontSize: small ? "28px" : "52px",
+          color: "#E8175D",
+          letterSpacing: "-1px",
+        }}
+      >
+        HITS
+      </span>
+    </div>
+    {!small && (
+      <p
+        style={{
+          fontFamily: "'Raleway', sans-serif",
+          fontWeight: 700,
+          fontSize: "11px",
+          color: "#1B4F9B",
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          marginTop: "6px",
+        }}
+      >
+        Escanea · Escucha · Adivina
+      </p>
+    )}
   </div>
 );
