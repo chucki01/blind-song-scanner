@@ -1,4 +1,5 @@
 import React from "react";
+import { Logo } from "./Logo.tsx";
 
 interface ModeSelectionProps {
   onSelectNormal: () => void;
@@ -12,6 +13,10 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
   onInstructions,
 }) => (
   <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
+
+    <div className="mb-8">
+      <Logo />
+    </div>
 
     <p className="text-base font-bold tracking-widest uppercase mb-8 text-center"
       style={{ color: "#1B4F9B" }}>

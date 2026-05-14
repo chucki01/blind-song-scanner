@@ -142,7 +142,7 @@ export const BingoPlayer: React.FC<BingoPlayerProps> = ({ playlist, onBack }) =>
     <div className="flex flex-col items-center p-6 w-full max-w-sm mx-auto gap-6">
 
       {/* Header */}
-      <div className="flex flex-col items-center gap-1">
+      <div className="flex flex-col items-center gap-2">
         <Logo />
         <p className="text-sm" style={{ color: "rgba(0,0,0,0.3)" }}>
           {playlist.length} canciones · {availableSongs.length} restantes
