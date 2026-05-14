@@ -13,39 +13,6 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({
 }) => (
   <div className="flex flex-col items-center justify-center p-6 w-full max-w-sm mx-auto">
 
-    <div className="relative flex items-center justify-center mb-10">
-      <div
-        className="relative w-28 h-28 rounded-2xl flex items-center justify-center"
-        style={{
-          background: "rgba(232,23,93,0.07)",
-          border: "1.5px solid rgba(232,23,93,0.2)",
-          animation: "redPulse 2.5s ease-in-out infinite, floatY 3s ease-in-out infinite",
-        }}
-      >
-        <svg viewBox="0 0 80 80" fill="none" className="w-16 h-16">
-          <rect x="6" y="6" width="22" height="22" rx="3" stroke="#E8175D" strokeWidth="2.5" fill="none"/>
-          <rect x="11" y="11" width="12" height="12" rx="1.5" fill="#E8175D"/>
-          <rect x="52" y="6" width="22" height="22" rx="3" stroke="#E8175D" strokeWidth="2.5" fill="none"/>
-          <rect x="57" y="11" width="12" height="12" rx="1.5" fill="#E8175D"/>
-          <rect x="6" y="52" width="22" height="22" rx="3" stroke="#E8175D" strokeWidth="2.5" fill="none"/>
-          <rect x="11" y="57" width="12" height="12" rx="1.5" fill="#E8175D"/>
-          <text x="40" y="46" textAnchor="middle" fontSize="18" fill="#1B4F9B" opacity="0.9">&#9834;</text>
-          <rect x="35" y="6" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.7"/>
-          <rect x="42" y="6" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.4"/>
-          <rect x="35" y="13" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.5"/>
-          <rect x="42" y="13" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.8"/>
-          <rect x="35" y="52" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.6"/>
-          <rect x="42" y="52" width="10" height="5" rx="1" fill="#1B4F9B" opacity="0.5"/>
-          <rect x="35" y="59" width="10" height="5" rx="1" fill="#1B4F9B" opacity="0.7"/>
-          <rect x="52" y="35" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.6"/>
-          <rect x="59" y="35" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.9"/>
-          <rect x="66" y="35" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.4"/>
-          <rect x="52" y="42" width="10" height="5" rx="1" fill="#1B4F9B" opacity="0.7"/>
-          <rect x="66" y="42" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.5"/>
-        </svg>
-      </div>
-    </div>
-
     <p className="text-base font-bold tracking-widest uppercase mb-8 text-center"
       style={{ color: "#1B4F9B" }}>
       Elige modo de juego

@@ -20,19 +20,19 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
     <div
       className="w-full rounded-2xl p-5 relative overflow-hidden"
       style={{
-        background: "#111111",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: "#EFEFEF",
+        border: "1px solid rgba(0,0,0,0.07)",
       }}
     >
       {/* Glow top right */}
       <div
         className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(202,255,0,0.08) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(232,23,93,0.08) 0%, transparent 70%)" }}
       />
 
       <p
         className="text-xs font-bold tracking-widest uppercase mb-4"
-        style={{ color: "rgba(245,242,235,0.3)", fontFamily: "Raleway, sans-serif" }}
+        style={{ color: "rgba(0,0,0,0.35)", fontFamily: "Raleway, sans-serif" }}
       >
         {isPlaying ? "▶ Sonando ahora" : "⏸ Pausado"}
       </p>
@@ -44,7 +44,7 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
             key={i}
             className={`flex-1 rounded-sm wave-bar ${!isPlaying ? "opacity-30" : ""}`}
             style={{
-              background: "#CAFF00",
+              background: "#E8175D",
               height: `${30 + Math.random() * 70}%`,
               transform: "scaleY(0.5)",
             }}
@@ -57,8 +57,8 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
     <div
       className="w-full rounded-2xl p-5 flex flex-col items-center gap-4"
       style={{
-        background: "#111111",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: "#EFEFEF",
+        border: "1px solid rgba(0,0,0,0.07)",
       }}
     >
       <PlayerControls isPlaying={isPlaying} onPlayPause={onPlayPause} />
@@ -69,12 +69,12 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
       onClick={onScanAgain}
       className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
       style={{
-        background: "#CAFF00",
-        color: "#000",
+        background: "#E8175D",
+        color: "#fff",
         fontFamily: "'Russo One', sans-serif",
         fontSize: "14px",
         letterSpacing: "0.1em",
-        boxShadow: "0 8px 30px rgba(202,255,0,0.2)",
+        boxShadow: "0 8px 30px rgba(232,23,93,0.2)",
       }}
     >
       → ESCANEAR OTRA
@@ -84,7 +84,7 @@ export const PlayingView: React.FC<PlayingViewProps> = ({
     <button
       onClick={onReset}
       className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-      style={{ color: "rgba(245,242,235,0.25)", fontFamily: "Raleway, sans-serif" }}
+      style={{ color: "rgba(0,0,0,0.35)", fontFamily: "Raleway, sans-serif" }}
     >
       Volver al inicio
     </button>

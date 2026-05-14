@@ -11,9 +11,9 @@ export const FreeAccountPlayedView: React.FC<FreeAccountPlayedViewProps> = ({ on
     <div
       className="w-20 h-20 rounded-full flex items-center justify-center text-4xl"
       style={{
-        background: "rgba(202,255,0,0.08)",
-        border: "2px solid rgba(202,255,0,0.25)",
-        boxShadow: "0 0 40px rgba(202,255,0,0.1)",
+        background: "rgba(232,23,93,0.07)",
+        border: "2px solid rgba(232,23,93,0.2)",
+        boxShadow: "0 0 40px rgba(232,23,93,0.1)",
       }}
     >
       ✅
@@ -22,21 +22,21 @@ export const FreeAccountPlayedView: React.FC<FreeAccountPlayedViewProps> = ({ on
     <div className="text-center flex flex-col gap-2">
       <h2
         className="text-2xl tracking-wide"
-        style={{ fontFamily: "'Russo One', sans-serif", color: "#CAFF00", textShadow: "0 0 20px rgba(202,255,0,0.4)" }}
+        style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D", textShadow: "0 0 20px rgba(232,23,93,0.3)" }}
       >
         ¡REPRODUCIDA!
       </h2>
-      <p className="text-sm" style={{ color: "rgba(245,242,235,0.4)", fontFamily: "Raleway, sans-serif" }}>
+      <p className="text-sm" style={{ color: "rgba(0,0,0,0.35)", fontFamily: "Raleway, sans-serif" }}>
         La canción se ha abierto en Spotify.
       </p>
-      <p className="text-sm font-bold" style={{ color: "rgba(245,242,235,0.5)", fontFamily: "Raleway, sans-serif" }}>
+      <p className="text-sm font-bold" style={{ color: "rgba(0,0,0,0.35)", fontFamily: "Raleway, sans-serif" }}>
         ¡Ya puedes dar la vuelta al móvil! 😉
       </p>
     </div>
 
     <div
       className="w-full h-px"
-      style={{ background: "linear-gradient(90deg, transparent, rgba(202,255,0,0.2), transparent)" }}
+      style={{ background: "linear-gradient(90deg, transparent, rgba(232,23,93,0.2), transparent)" }}
     />
 
     <div className="flex flex-col gap-3 w-full">
@@ -44,12 +44,12 @@ export const FreeAccountPlayedView: React.FC<FreeAccountPlayedViewProps> = ({ on
         onClick={onScanAgain}
         className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
         style={{
-          background: "#CAFF00",
-          color: "#000",
+          background: "#E8175D",
+          color: "#fff",
           fontFamily: "'Russo One', sans-serif",
           fontSize: "14px",
           letterSpacing: "0.1em",
-          boxShadow: "0 8px 30px rgba(202,255,0,0.2)",
+          boxShadow: "0 8px 30px rgba(232,23,93,0.2)",
         }}
       >
         → SIGUIENTE CANCIÓN
@@ -60,8 +60,8 @@ export const FreeAccountPlayedView: React.FC<FreeAccountPlayedViewProps> = ({ on
         className="w-full py-3 rounded-2xl font-bold transition-all hover:opacity-70"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          color: "rgba(245,242,235,0.4)",
+          border: "1px solid rgba(0,0,0,0.07)",
+          color: "rgba(0,0,0,0.35)",
           fontFamily: "Raleway, sans-serif",
           fontSize: "13px",
         }}

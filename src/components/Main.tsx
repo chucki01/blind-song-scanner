@@ -185,14 +185,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     <div className="flex flex-col items-center justify-center gap-4 p-6">
       <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
         style={{ background: "rgba(232,23,93,0.07)", border: "1.5px solid rgba(232,23,93,0.2)", animation: "redPulse 1.5s ease-in-out infinite" }}>
-        <svg viewBox="0 0 48 48" fill="none" className="w-8 h-8">
-          <rect x="4" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-          <rect x="8" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
-          <rect x="28" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-          <rect x="32" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
-          <rect x="4" y="28" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-          <rect x="8" y="32" width="8" height="8" rx="1" fill="#E8175D"/>
-        </svg>
+        <span style={{ fontSize: "32px" }}>🎵</span>
       </div>
       <p style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D", fontSize: "16px" }}>
         CARGANDO PLAYLIST...
