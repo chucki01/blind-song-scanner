@@ -229,7 +229,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       </p>
       <button onClick={handleBackToModes}
         className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.2)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         ← Cambiar modo
       </button>
     </div>
@@ -242,14 +242,14 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
       </p>
       <button onClick={handleBackToModes}
         className="text-xs font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
-        style={{ color: "rgba(245,242,235,0.2)" }}>
+        style={{ color: "rgba(0,0,0,0.25)" }}>
         ← Cambiar modo
       </button>
     </div>
   ) : (
     <div className="flex flex-col items-center gap-4 text-center">
       <div className="text-5xl">🎵</div>
-      <h2 className="text-xl" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(245,242,235,0.6)" }}>
+      <h2 className="text-xl" style={{ fontFamily: "'Russo One', sans-serif", color: "rgba(0,0,0,0.4)" }}>
         ScanHits
       </h2>
     </div>
