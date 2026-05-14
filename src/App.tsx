@@ -22,7 +22,7 @@ function App() {
         style={{ background: "#F8F8F8", zIndex: 1 }}
       >
         <div className="w-full max-w-sm flex flex-col items-center">
-          {started && (
+          {started && showSmallHeader && (
             <Header
               onLogoClick={() => {
                 setResetTrigger((prev) => prev + 1);
