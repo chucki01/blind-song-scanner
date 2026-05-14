@@ -14,16 +14,12 @@ export const Header: React.FC<HeaderProps> = ({ onLogoClick, small }) => (
       style={{ fontFamily: "'Russo One', sans-serif" }}
       onClick={onLogoClick}
     >
-      <span
-        className={`block text-center transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
-        style={{ color: "#111111" }}
-      >
+      <span className={`transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
+        style={{ color: "#111111" }}>
         SCAN
       </span>
-      <span
-        className={`block text-center transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
-        style={{ color: "#E8175D" }}
-      >
+      <span className={`transition-all duration-500 ${small ? "text-2xl" : "text-5xl"}`}
+        style={{ color: "#E8175D" }}>
         HITS
       </span>
     </h1>

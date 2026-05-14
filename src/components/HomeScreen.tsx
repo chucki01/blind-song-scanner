@@ -22,58 +22,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart, onInstructions 
       }}
     >
       {/* Logo */}
-      <div className="relative flex items-center justify-center w-full">
-        <div className="relative flex flex-col items-center gap-1 z-10">
-          <div
-            className="w-24 h-24 rounded-3xl flex items-center justify-center mb-2"
-            style={{
-              background: "rgba(232,23,93,0.07)",
-              border: "1.5px solid rgba(232,23,93,0.2)",
-              animation: "redPulse 3s ease-in-out infinite",
-              boxShadow: "0 0 60px rgba(232,23,93,0.07)",
-            }}
-          >
-            <svg viewBox="0 0 48 48" fill="none" className="w-12 h-12">
-              <rect x="4" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-              <rect x="8" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
-              <rect x="28" y="4" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-              <rect x="32" y="8" width="8" height="8" rx="1" fill="#E8175D"/>
-              <rect x="4" y="28" width="16" height="16" rx="2" stroke="#E8175D" strokeWidth="2" fill="none"/>
-              <rect x="8" y="32" width="8" height="8" rx="1" fill="#E8175D"/>
-              <text x="36" y="42" textAnchor="middle" fontSize="14" fill="#E8175D" opacity="0.9">♪</text>
-              <rect x="28" y="28" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.7"/>
-              <rect x="35" y="28" width="5" height="5" rx="1" fill="#1B4F9B" opacity="0.4"/>
-              <rect x="28" y="35" width="12" height="5" rx="1" fill="#1B4F9B" opacity="0.6"/>
-            </svg>
-          </div>
-
-          <h1
-            className="text-5xl tracking-tight leading-none"
-            style={{ fontFamily: "'Russo One', sans-serif", color: "#111111" }}
-          >
-            SCAN
-          </h1>
-          <h1
-            className="text-5xl tracking-tight leading-none"
-            style={{ fontFamily: "'Russo One', sans-serif", color: "#E8175D" }}
-          >
-            HITS
-          </h1>
-        </div>
+      <div className="flex flex-col items-center gap-2">
+        <h1
+          className="tracking-tight leading-none"
+          style={{ fontFamily: "'Russo One', sans-serif", fontSize: "clamp(3rem, 14vw, 4.5rem)" }}
+        >
+          <span style={{ color: "#111111" }}>SCAN</span>
+          <span style={{ color: "#E8175D" }}>HITS</span>
+        </h1>
+        <p
+          className="text-sm font-bold uppercase tracking-widest"
+          style={{ color: "#1B4F9B", letterSpacing: "0.22em", fontFamily: "Raleway, sans-serif" }}
+        >
+          Escanea · Escucha · Adivina
+        </p>
       </div>
-
-      {/* Tagline */}
-      <p
-        className="text-center text-sm tracking-widest uppercase"
-        style={{
-          color: "#1B4F9B",
-          fontFamily: "Raleway, sans-serif",
-          letterSpacing: "0.25em",
-          fontWeight: 700,
-        }}
-      >
-        Escanea · Escucha · Adivina
-      </p>
 
       {/* Botón JUGAR */}
       <button
