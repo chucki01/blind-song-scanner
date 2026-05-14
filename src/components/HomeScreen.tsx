@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import logo from "../assets/img/logo.png";
 
 interface HomeScreenProps {
   onStart: () => void;
@@ -22,21 +23,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart, onInstructions 
       }}
     >
       {/* Logo */}
-      <div className="flex flex-col items-center gap-2">
-        <h1
-          className="tracking-tight leading-none"
-          style={{ fontFamily: "'Russo One', sans-serif", fontSize: "clamp(3rem, 14vw, 4.5rem)" }}
-        >
-          <span style={{ color: "#111111" }}>SCAN</span>
-          <span style={{ color: "#E8175D" }}>HITS</span>
-        </h1>
-        <p
-          className="text-sm font-bold uppercase tracking-widest"
-          style={{ color: "#1B4F9B", letterSpacing: "0.22em", fontFamily: "Raleway, sans-serif" }}
-        >
-          Escanea · Escucha · Adivina
-        </p>
-      </div>
+      <img src={logo} alt="ScanHits" style={{ width: "260px" }} />
 
       {/* Botón JUGAR */}
       <button
