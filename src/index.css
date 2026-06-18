@@ -20,10 +20,11 @@
 body {
   font-family: 'Raleway', sans-serif;
   background: linear-gradient(
-    to bottom,
-    #003366,
-    #ff3366,
-    #000000
+    to bottom right,
+    #000000,
+    #555555,
+    #FF3366,
+    #003366
   );
   min-height: 100vh;
   margin: 0;
