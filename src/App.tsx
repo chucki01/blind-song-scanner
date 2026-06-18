@@ -19,7 +19,7 @@ function App() {
 
       <div
         className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative"
-        style={{ background: "#F8F8F8", zIndex: 1 }}
+        style={{ zIndex: 1 }}
       >
         <div className="w-full max-w-sm flex flex-col items-center">
           {started && showSmallHeader && (
