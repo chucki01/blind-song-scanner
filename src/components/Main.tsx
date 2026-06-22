@@ -90,6 +90,9 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   };
 
   const handleScan = async (result: string) => {
+    if (result?.startsWith("spotify:track:")) {
+      result = "https://open.spotify.com/track/" + result.replace("spotify:track:", "");
+    }
     if (!result?.startsWith("https://open.spotify.com/track/")) {
       setIsError(true);
       setIsScanning(false);
