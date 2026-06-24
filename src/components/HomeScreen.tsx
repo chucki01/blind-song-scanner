@@ -33,7 +33,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onStart, onInstructions 
       </button>
 
       <button
-        onClick={onInstructions}
+        onClick={() => window.open("/manual.pdf", "_blank")}
         className="w-full py-4 rounded-2xl font-bold tracking-wide transition-all hover:opacity-80"
         style={{ background: "rgba(27,79,155,0.06)", border: "1px solid rgba(27,79,155,0.15)", color: "#1B4F9B", fontFamily: "'Russo One', sans-serif", fontSize: "14px", letterSpacing: "0.1em" }}
       >
