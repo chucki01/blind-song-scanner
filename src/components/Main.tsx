@@ -4,6 +4,7 @@ import { PlayingView } from "./PlayingView.tsx";
 import { ErrorView } from "./ErrorView.tsx";
 import { ModeSelection } from "./ModeSelection.tsx";
 import { PlaylistScanner } from "./PlaylistScanner.tsx";
+import { BingoSelection } from "./BingoSelection.tsx";
 import { BingoPlayer } from "./BingoPlayer.tsx";
 import { ReadyToPlay } from "./ReadyToPlay.tsx";
 import { ReadyToFlip } from "./ReadyToFlip.tsx";
@@ -35,6 +36,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const [selectedMode, setSelectedMode] = useState<"normal" | "bingo" | null>(null);
 
   const [showPlaylistScanner, setShowPlaylistScanner] = useState(false);
+  const [showBingoSelection, setShowBingoSelection] = useState(false);
   const [showBingoPlayer, setShowBingoPlayer] = useState(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<any[]>([]);
   const [isLoadingPlaylist, setIsLoadingPlaylist] = useState(false);
@@ -132,7 +134,12 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   const handleModeBingo = () => {
     setSelectedMode("bingo");
     setShowModeSelection(false);
-    setShowPlaylistScanner(true);
+    setShowBingoSelection(true);
+  };
+
+  const handleBingoEditionSelected = async (playlistUrl: string) => {
+    setShowBingoSelection(false);
+    await handlePlaylistScanned(playlistUrl);
   };
 
   const handlePlaylistScanned = async (playlistUrl: string) => {
@@ -156,7 +163,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
 
   const handleBingoBack = () => {
     setShowBingoPlayer(false);
-    setShowPlaylistScanner(true);
+    setShowBingoSelection(true);
     setCurrentPlaylist([]);
   };
 
@@ -191,6 +198,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
     setShowModeSelection(false);
     setSelectedMode(null);
     setShowPlaylistScanner(false);
+    setShowBingoSelection(false);
     setShowBingoPlayer(false);
     setCurrentPlaylist([]);
   };
@@ -212,6 +220,7 @@ function Main({ accessToken, resetTrigger, isActive }: MainProps) {
   );
 
   if (showModeSelection) return <ModeSelection onSelectNormal={handleModeNormal} onSelectBingo={handleModeBingo} onInstructions={() => {}} />;
+  if (showBingoSelection) return <BingoSelection onSelect={handleBingoEditionSelected} onCancel={handleBackToModes} />;
   if (showPlaylistScanner) return <PlaylistScanner onPlaylistScanned={handlePlaylistScanned} onError={() => setIsError(true)} onCancel={handleBackToModes} />;
   if (showBingoPlayer) return <BingoPlayer playlist={currentPlaylist} onBack={handleBingoBack} />;
   if (showReady && previewUrl) return <ReadyToFlip previewUrl={previewUrl} isFree={isFreeAccount} onReady={handleReady} onCancel={handleBackToModes} />;
