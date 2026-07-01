@@ -72,22 +72,17 @@ export const BingoSelection: React.FC<BingoSelectionProps> = ({ onSelect, onCanc
           >
             <div className="flex items-center gap-4">
               <span style={{ fontSize: "32px" }}>{edition.emoji}</span>
-              <div>
-                <p
-                  className="font-bold"
-                  style={{
-                    fontFamily: "'Russo One', sans-serif",
-                    color: "#E8175D",
-                    fontSize: "16px",
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  {edition.name}
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: "rgba(0,0,0,0.4)" }}>
-                  {edition.description}
-                </p>
-              </div>
+              <p
+                className="font-bold"
+                style={{
+                  fontFamily: "'Russo One', sans-serif",
+                  color: "#E8175D",
+                  fontSize: "16px",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {edition.name}
+              </p>
             </div>
           </button>
         ))}
